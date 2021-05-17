@@ -1,37 +1,60 @@
-﻿using Player.Core;
+﻿using Microsoft.EntityFrameworkCore;
+using Player.Core;
 using Player.Core.Entities;
+using Player.Core.Utils;
 using Player.Core.Utils.MVVM;
+using Player.ViewModels.Pages;
+using Player.Views.Pages;
+using Serilog;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Player.ViewModels.Windows
 {
     public class MainViewModel : Notifier
     {
-        private Page currentPage;
-        public Page CurrentPage
+        public Navigation Navigation { get; private set; }
+
+        private RelayCommand navigateToCommand;
+        public RelayCommand NavigateToCommand
         {
-            get => currentPage;
-            set
+            get => navigateToCommand ??= new RelayCommand(obj =>
             {
-                currentPage = value;
-                NotifyPropertyChanged(nameof(CurrentPage));
-            }
+                if (obj is Page page)
+                    Navigation.NavigateTo(page);
+            });
         }
 
-        public ObservableCollection<Track> Tracks { get; set; } = new ObservableCollection<Track>();
-        public ObservableCollection<Album> Albums { get; set; } = new ObservableCollection<Album>();
-        public ObservableCollection<Artist> Artists { get; set; } = new ObservableCollection<Artist>();
+        private RelayCommand navigateBackCommand;
+        public RelayCommand NavigateBackCommand
+        {
+            get => navigateBackCommand ??= new RelayCommand
+            (
+                obj => Navigation.NavigateBack(),
+                obj => Navigation.CanNavigateBack()
+            );
+        }
+
+        private RelayCommand openEntityCommand;
+        public RelayCommand OpenEntityCommand
+        {
+            get => openEntityCommand ??= new RelayCommand(obj =>
+            {
+                Page page;
+                if (obj is Album album)
+                    page = new AlbumViewPage (this) { DataContext = album };
+                else if (obj is Artist artist)
+                    page = new ArtistViewPage(this) { DataContext = artist };
+                else return;
+
+                Navigation.NavigateTo(page);
+            });
+        }
 
         public MainViewModel()
         {
-            var db = new ApplicationContext();
-            foreach (Track track in db.Tracks)
-                Tracks.Add(track);
-            foreach (Album album in db.Albums)
-                Albums.Add(album);
-            foreach (Artist artist in db.Artists)
-                Artists.Add(artist);
+            Navigation = new Navigation(new MainPage(this));
         }
     }
 }

@@ -95,6 +95,7 @@ namespace Player.Core
             {
                 ProgressPercentage = 100;
                 database.SaveChanges();
+                database.Dispose();
                 Settings.IsMusicLoaded = true;
                 Settings.Save();
                 Log.Information("Скан библиотеки завершен.");
