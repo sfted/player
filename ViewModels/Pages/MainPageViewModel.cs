@@ -28,7 +28,7 @@ namespace Player.ViewModels.Pages
 
             foreach (Track track in db.Tracks.Include(track => track.Artists))
                 Tracks.Add(track);
-            foreach (Album album in db.Albums.Include(album => album.Artists))
+            foreach (Album album in db.Albums.Include(album => album.Artists).Include(album => album.Genres))
                 Albums.Add(album);
             foreach (Artist artist in db.Artists.Include(artist => artist.Tracks).Include(artist => artist.Albums))
                 Artists.Add(artist);

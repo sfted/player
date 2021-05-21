@@ -1,10 +1,13 @@
 ﻿using Player.Core.Entities;
 using Player.Core.Utils;
+using Player.Core.Utils.Extensions;
 using Player.Core.Utils.MVVM;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Media.Imaging;
@@ -146,7 +149,7 @@ namespace Player.Core
                 Log.Error("Формат файла '{FileName}' не поддерживается. Пропускаю...", Path.GetFileName(fileName));
                 return;
             }
-            catch(TagLib.CorruptFileException)
+            catch (TagLib.CorruptFileException)
             {
                 Log.Error("Файл '{FileName}' поврежден. Пропускаю...", Path.GetFileName(fileName));
                 return;
@@ -175,7 +178,8 @@ namespace Player.Core
             if (raw.AlbumArt != null)
             {
                 album.RenderAlbumArtUri(App.ALBUM_ARTS_DIRECTORY);
-                SaveAlbumArt(album.AlbumArtUri, raw.AlbumArt);
+                if (!System.IO.File.Exists(album.AlbumArtUri))
+                    SaveAlbumArt(album.AlbumArtUri, raw.AlbumArt.Data.Data);
             }
             else
             {
@@ -259,18 +263,22 @@ namespace Player.Core
             };
         }
 
-        private static void SaveAlbumArt(string path, IPicture art)
+        //private static Bitmap DataToBitmap(byte[] data)
+        //{
+        //    using var stream = new MemoryStream(data);
+        //    return new Bitmap(stream);
+        //}
+
+        private static void SaveAlbumArt(string path, byte[] data)
         {
             try
             {
-                if (!System.IO.File.Exists(path))
-                {
-                    var ms = new MemoryStream(art.Data.Data);
-                    var encoder = new JpegBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create(ms));
-                    using var fileStream = new FileStream(path, FileMode.Create);
-                    encoder.Save(fileStream);
-                }
+                var ms = new MemoryStream(data);
+                var encoder = new JpegBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(ms));
+                using var fileStream = new FileStream(path, FileMode.Create);
+                encoder.Save(fileStream);
+                //bitmap.Save(path, ImageFormat.Jpeg);
             }
             catch (Exception ex)
             {

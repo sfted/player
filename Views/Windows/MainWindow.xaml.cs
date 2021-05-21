@@ -26,7 +26,6 @@ namespace Player
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -44,6 +43,8 @@ namespace Player
                 window.DataContext = viewModel;
                 window.Show();
             }
+
+            DataContext = new MainViewModel();
         }
     }
 }

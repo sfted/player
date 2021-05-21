@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Drawing;
 
 namespace Player.Core.Entities
 {
@@ -9,6 +11,7 @@ namespace Player.Core.Entities
         public uint TrackCount { get; set; }
         public uint DiscCount { get; set; }
         public string AlbumArtUri { get; set; }
+
         public List<Track> Tracks { get; set; } = new List<Track>();
         public List<Artist> Artists { get; set; } = new List<Artist>();
         public List<Genre> Genres { get; set; } = new List<Genre>();

@@ -43,7 +43,10 @@ namespace Player.ViewModels.Windows
             {
                 Page page;
                 if (obj is Album album)
-                    page = new AlbumViewPage (this) { DataContext = album };
+                {
+                    album.Tracks.Sort((t1, t2) => t1.Number.CompareTo(t2.Number));
+                    page = new AlbumViewPage(this) { DataContext = album };
+                }
                 else if (obj is Artist artist)
                     page = new ArtistViewPage(this) { DataContext = artist };
                 else return;

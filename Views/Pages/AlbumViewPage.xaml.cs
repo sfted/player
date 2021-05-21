@@ -1,7 +1,7 @@
 ﻿using Player.ViewModels.Windows;
 using System.Windows.Controls;
 
-namespace Player.ViewModels.Pages
+namespace Player.Views.Pages
 {
     /// <summary>
     /// Interaction logic for AlbumViewPage.xaml

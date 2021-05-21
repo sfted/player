@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Player.ViewModels.Pages
+namespace Player.Views.Pages
 {
     /// <summary>
     /// Interaction logic for ArtistViewPage.xaml
