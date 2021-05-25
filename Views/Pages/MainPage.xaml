@@ -2,9 +2,9 @@
     x:Class="Player.Views.Pages.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:c="clr-namespace:Player.Controls"
+    xmlns:controls="clr-namespace:Player.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:e="clr-namespace:Player.Core.Entities"
+    xmlns:entities="clr-namespace:Player.Core.Entities"
     xmlns:local="clr-namespace:Player.ViewModels.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Моя музыка"
@@ -13,131 +13,6 @@
     d:DesignWidth="800"
     FontFamily="Open Sans"
     mc:Ignorable="d">
-    <Page.Resources>
-        <DataTemplate
-            x:Key="AlbumDataTemplate"
-            DataType="{x:Type e:Album}">
-            <StackPanel Margin="16">
-                <Border
-                    Width="128"
-                    Height="128"
-                    Background="White"
-                    BorderThickness="0">
-                    <c:CustomImage
-                        x:Name="Art"
-                        Stretch="UniformToFill">
-                        <Image.Triggers>
-                            <EventTrigger RoutedEvent="c:CustomImage.SourceChanged">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation
-                                            Storyboard.TargetProperty="(Image.Opacity)"
-                                            From="0"
-                                            To="1"
-                                            Duration="0:0:0.25" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                        </Image.Triggers>
-                    </c:CustomImage>
-                </Border>
-                <TextBlock Text="{Binding Title}" />
-            </StackPanel>
-            <DataTemplate.Triggers>
-                <DataTrigger
-                    Binding="{Binding Path=(c:EffectiveScrollViewer.IsInViewport), UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"
-                    Value="True">
-                    <Setter TargetName="Art" Property="Source" Value="{Binding ArtSmall}" />
-                </DataTrigger>
-                <DataTrigger
-                    Binding="{Binding Path=(c:EffectiveScrollViewer.IsInViewport), UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"
-                    Value="False">
-                    <Setter TargetName="Art" Property="Source" Value="{x:Null}" />
-                </DataTrigger>
-            </DataTemplate.Triggers>
-        </DataTemplate>
-
-        <!--<DataTemplate>
-            <Grid
-                Margin="6"
-                VerticalAlignment="Top"
-                Cursor="Hand">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition
-                        Height="Auto"
-                        SharedSizeGroup="A" />
-                </Grid.RowDefinitions>
-                <Image
-                    Grid.Row="0"
-                    Source="{Binding AlbumArtUri}"
-                    Stretch="UniformToFill" />
-                <StackPanel Grid.Row="1">
-                    <TextBlock
-                        Margin="0,3,0,0"
-                        FontSize="13"
-                        FontWeight="SemiBold"
-                        Text="{Binding Title}"
-                        TextTrimming="CharacterEllipsis"
-                        ToolTip="{Binding Title}" />
-                    <ItemsControl
-                        Margin="0,3,0,0"
-                        ItemsSource="{Binding Artists}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <VirtualizingStackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock
-                                    Margin="0,0,3,0"
-                                    Cursor="Hand"
-                                    FontSize="13"
-                                    Text="{Binding Name}"
-                                    TextTrimming="CharacterEllipsis"
-                                    ToolTip="{Binding Name}">
-                                    <TextBlock.InputBindings>
-                                        <MouseBinding
-                                            Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                            CommandParameter="{Binding}"
-                                            Gesture="LeftClick" />
-                                    </TextBlock.InputBindings>
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Foreground" Value="Gray" />
-                                            <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Foreground" Value="DodgerBlue" />
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <TextBlock
-                        Margin="0,3,0,0"
-                        FontSize="13"
-                        Foreground="Gray"
-                        Text="{Binding Year}" />
-        <Button
-                                        Margin="0,4,0,0"
-                                        Padding="8,4"
-                                        Command="{Binding DataContext.MainViewModel.Bruh, RelativeSource={RelativeSource AncestorType=Page}}"
-                                        CommandParameter="{Binding}"
-                                        Content="Открыть" />
-        </StackPanel>
-                <Grid.InputBindings>
-                    <MouseBinding
-                        Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                        CommandParameter="{Binding}"
-                        Gesture="LeftClick" />
-                </Grid.InputBindings>
-            </Grid>
-        </DataTemplate>-->
-    </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -145,14 +20,13 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!--  Дизайн будет переделываться!!!  -->
-        <TabControl
-            Grid.Row="1"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            BorderThickness="0,1,0,0"
-            FontSize="16">
-            <TabItem Header="Треки">
+        <TabControl Grid.Row="1">
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock
+                        Style="{StaticResource TabHeaderTextBlockStyle}"
+                        Text="ТРЕКИ" />
+                </TabItem.Header>
                 <ListView
                     HorizontalContentAlignment="Stretch"
                     BorderThickness="0"
@@ -160,25 +34,43 @@
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid HorizontalAlignment="Stretch">
+                            <Grid
+                                Margin="16,12,16,12"
+                                HorizontalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="0.75*" />
                                     <ColumnDefinition Width="0.75*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock
+
+                                <ContentControl
                                     Grid.Column="0"
-                                    Margin="16,8,8,8"
-                                    VerticalAlignment="Center"
-                                    FontSize="15"
-                                    Text="{Binding Title}"
-                                    TextTrimming="CharacterEllipsis" />
-                                <!--  По-хорошему надо писать юзер контрол, но мне лень  -->
-                                <ItemsControl
+                                    Margin="8,0,12,0">
+                                    <Path
+                                        MaxHeight="16"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Data="{StaticResource icon-audiotrack}"
+                                        Fill="Gray"
+                                        Stretch="Uniform" />
+                                </ContentControl>
+
+                                <TextBlock
                                     Grid.Column="1"
-                                    Margin="16,8,8,8"
+                                    Margin="8,0,8,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="13"
+                                    FontWeight="SemiBold"
+                                    Text="{Binding Title}"
+                                    TextTrimming="CharacterEllipsis"
+                                    ToolTip="{Binding Title}" />
+
+                                <ItemsControl
+                                    Grid.Column="2"
+                                    Margin="8,0,8,0"
                                     VerticalAlignment="Center"
                                     ItemsSource="{Binding Artists}">
                                     <ItemsControl.ItemsPanel>
@@ -190,10 +82,9 @@
                                         <DataTemplate>
                                             <TextBlock
                                                 Margin="0,0,3,0"
-                                                Cursor="Hand"
                                                 FontSize="13"
+                                                Style="{StaticResource ClickableTextBlockStyle}"
                                                 Text="{Binding Name}"
-                                                TextTrimming="CharacterEllipsis"
                                                 ToolTip="{Binding Name}">
                                                 <TextBlock.InputBindings>
                                                     <MouseBinding
@@ -201,27 +92,19 @@
                                                         CommandParameter="{Binding}"
                                                         Gesture="LeftClick" />
                                                 </TextBlock.InputBindings>
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Style.Triggers>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter Property="Foreground" Value="DodgerBlue" />
-                                                            </Trigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
                                             </TextBlock>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
+
                                 <TextBlock
-                                    Grid.Column="2"
-                                    Margin="16,8,8,8"
+                                    Grid.Column="3"
+                                    Margin="8,0,8,0"
                                     VerticalAlignment="Center"
                                     Cursor="Hand"
                                     FontSize="13"
+                                    Style="{StaticResource ClickableTextBlockStyle}"
                                     Text="{Binding Album.Title}"
-                                    TextTrimming="CharacterEllipsis"
                                     ToolTip="{Binding Album.Title}">
                                     <TextBlock.InputBindings>
                                         <MouseBinding
@@ -229,26 +112,19 @@
                                             CommandParameter="{Binding Album}"
                                             Gesture="LeftClick" />
                                     </TextBlock.InputBindings>
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Foreground" Value="DodgerBlue" />
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
                                 </TextBlock>
+
                                 <TextBlock
-                                    Grid.Column="3"
-                                    Margin="16,8,8,8"
+                                    Grid.Column="4"
+                                    Margin="8,0,8,0"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     FontSize="13"
                                     Text="{Binding Album.Year}" />
+
                                 <TextBlock
-                                    Grid.Column="4"
-                                    Margin="16,8,8,8"
+                                    Grid.Column="5"
+                                    Margin="8,0,0,0"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     FontSize="13"
@@ -258,125 +134,36 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </TabItem>
-            <TabItem Header="Альбомы">
-                <!--  По-хорошему надо писать юзер контрол, но мне лень  -->
-                <!--<ListView
-                    BorderThickness="0"
-                    Grid.IsSharedSizeScope="True"
-                    ItemsSource="{Binding Albums}"
-                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    VirtualizingStackPanel.IsVirtualizing="True">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid
-                                Margin="6"
-                                VerticalAlignment="Top"
-                                Cursor="Hand">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition
-                                        Height="Auto"
-                                        SharedSizeGroup="A" />
-                                </Grid.RowDefinitions>
-                                <Image
-                                    Grid.Row="0"
-                                    Source="{Binding AlbumArtUri}"
-                                    Stretch="UniformToFill" />
-                                <StackPanel Grid.Row="1">
-                                    <TextBlock
-                                        Margin="0,3,0,0"
-                                        FontSize="13"
-                                        FontWeight="SemiBold"
-                                        Text="{Binding Title}"
-                                        TextTrimming="CharacterEllipsis"
-                                        ToolTip="{Binding Title}" />
-                                    <ItemsControl
-                                        Margin="0,3,0,0"
-                                        ItemsSource="{Binding Artists}">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <VirtualizingStackPanel Orientation="Horizontal" />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock
-                                                    Margin="0,0,3,0"
-                                                    Cursor="Hand"
-                                                    FontSize="13"
-                                                    Text="{Binding Name}"
-                                                    TextTrimming="CharacterEllipsis"
-                                                    ToolTip="{Binding Name}">
-                                                    <TextBlock.InputBindings>
-                                                        <MouseBinding
-                                                            Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                                            CommandParameter="{Binding}"
-                                                            Gesture="LeftClick" />
-                                                    </TextBlock.InputBindings>
-                                                    <TextBlock.Style>
-                                                        <Style TargetType="TextBlock">
-                                                            <Setter Property="Foreground" Value="Gray" />
-                                                            <Style.Triggers>
-                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                    <Setter Property="Foreground" Value="DodgerBlue" />
-                                                                </Trigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBlock.Style>
-                                                </TextBlock>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                    <TextBlock
-                                        Margin="0,3,0,0"
-                                        FontSize="13"
-                                        Foreground="Gray"
-                                        Text="{Binding Year}" />
-                                </StackPanel>
-                                <Grid.InputBindings>
-                                    <MouseBinding
-                                        Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                        CommandParameter="{Binding}"
-                                        Gesture="LeftClick" />
-                                </Grid.InputBindings>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel
-                                IsItemsHost="True"
-                                ItemWidth="175"
-                                Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                </ListView>-->
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock
+                        Style="{StaticResource TabHeaderTextBlockStyle}"
+                        Text="АЛЬБОМЫ" />
+                </TabItem.Header>
                 <ListBox
                     BorderThickness="0"
-                    Grid.IsSharedSizeScope="True"
+                    Grid.IsSharedSizeScope="False"
                     ItemsSource="{Binding Albums}">
                     <ListBox.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate DataType="{x:Type entities:Album}">
                             <Grid
-                                Margin="6"
+                                Margin="8"
                                 VerticalAlignment="Top"
                                 Cursor="Hand">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
-                                    <RowDefinition
-                                        Height="Auto"
-                                        SharedSizeGroup="A" />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <Border
+                                <Grid
                                     Width="150"
                                     Height="150"
-                                    Background="White"
-                                    BorderThickness="0">
-                                    <c:CustomImage
-                                        x:Name="Art"
+                                    Background="Transparent">
+                                    <controls:CustomImage
+                                        x:Name="Image"
+                                        Panel.ZIndex="2"
                                         Stretch="UniformToFill">
                                         <Image.Triggers>
-                                            <EventTrigger RoutedEvent="c:CustomImage.SourceChanged">
+                                            <EventTrigger RoutedEvent="controls:CustomImage.SourceChanged">
                                                 <BeginStoryboard>
                                                     <Storyboard>
                                                         <DoubleAnimation
@@ -388,8 +175,22 @@
                                                 </BeginStoryboard>
                                             </EventTrigger>
                                         </Image.Triggers>
-                                    </c:CustomImage>
-                                </Border>
+                                    </controls:CustomImage>
+                                    <Border
+                                        Panel.ZIndex="1"
+                                        Background="#efefef"
+                                        CornerRadius="150">
+                                        <Path
+                                            Width="65"
+                                            Height="65"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Data="{StaticResource icon-album}"
+                                            Fill="Gray"
+                                            Stretch="Uniform" />
+                                    </Border>
+                                </Grid>
+
                                 <StackPanel Grid.Row="1">
                                     <TextBlock
                                         Margin="0,3,0,0"
@@ -403,17 +204,15 @@
                                         ItemsSource="{Binding Artists}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <VirtualizingStackPanel Orientation="Horizontal" />
+                                                <StackPanel Orientation="Horizontal" />
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock
                                                     Margin="0,0,3,0"
-                                                    Cursor="Hand"
-                                                    FontSize="13"
+                                                    Style="{StaticResource ClickableTextBlockStyle}"
                                                     Text="{Binding Name}"
-                                                    TextTrimming="CharacterEllipsis"
                                                     ToolTip="{Binding Name}">
                                                     <TextBlock.InputBindings>
                                                         <MouseBinding
@@ -421,16 +220,6 @@
                                                             CommandParameter="{Binding}"
                                                             Gesture="LeftClick" />
                                                     </TextBlock.InputBindings>
-                                                    <TextBlock.Style>
-                                                        <Style TargetType="TextBlock">
-                                                            <Setter Property="Foreground" Value="Gray" />
-                                                            <Style.Triggers>
-                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                    <Setter Property="Foreground" Value="DodgerBlue" />
-                                                                </Trigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBlock.Style>
                                                 </TextBlock>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
@@ -450,32 +239,87 @@
                             </Grid>
                             <DataTemplate.Triggers>
                                 <DataTrigger
-                                    Binding="{Binding Path=(c:EffectiveScrollViewer.IsInViewport), RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"
+                                    Binding="{Binding Path=(controls:EffectiveScrollViewer.IsInViewport), RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"
                                     Value="True">
-                                    <Setter TargetName="Art" Property="Source" Value="{Binding ArtSmall, IsAsync=True}" />
+                                    <Setter TargetName="Image" Property="Source" Value="{Binding ArtSmall, IsAsync=True}" />
                                 </DataTrigger>
                             </DataTemplate.Triggers>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                     <ListBox.Template>
                         <ControlTemplate>
-                            <c:EffectiveScrollViewer
+                            <controls:EffectiveScrollViewer
                                 HorizontalScrollBarVisibility="Disabled"
                                 VerticalScrollBarVisibility="Auto">
                                 <WrapPanel
                                     IsItemsHost="True"
-                                    ItemWidth="164" />
-                            </c:EffectiveScrollViewer>
+                                    ItemWidth="176" />
+                            </controls:EffectiveScrollViewer>
                         </ControlTemplate>
                     </ListBox.Template>
                 </ListBox>
             </TabItem>
-            <TabItem Header="Исполнители">
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock
+                        Style="{StaticResource TabHeaderTextBlockStyle}"
+                        Text="ИСПОЛНИТЕЛИ" />
+                </TabItem.Header>
                 <ListView
+                    HorizontalContentAlignment="Stretch"
                     BorderThickness="0"
-                    ItemsSource="{Binding Artists}" />
+                    ItemsSource="{Binding Artists}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid
+                                Margin="16,12,16,12"
+                                HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <ContentControl
+                                    Grid.Column="0"
+                                    Margin="8,0,12,0">
+                                    <Path
+                                        MaxHeight="16"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Data="{StaticResource icon-person}"
+                                        Fill="Gray"
+                                        Stretch="Uniform" />
+                                </ContentControl>
+
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Margin="8,0,8,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    FontSize="13"
+                                    Style="{StaticResource ClickableTextBlockStyle}"
+                                    Text="{Binding Name}"
+                                    ToolTip="{Binding Name}">
+                                    <TextBlock.InputBindings>
+                                        <MouseBinding
+                                            Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                            CommandParameter="{Binding}"
+                                            Gesture="LeftClick" />
+                                    </TextBlock.InputBindings>
+                                </TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </TabItem>
-            <TabItem Header="Папки" />
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock
+                        Style="{StaticResource TabHeaderTextBlockStyle}"
+                        Text="ПАПКИ" />
+                </TabItem.Header>
+            </TabItem>
         </TabControl>
     </Grid>
 </Page>

@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Player.Core.Entities;
-using System.IO;
 using System.Linq;
-using System.Windows.Media.Imaging;
 
 namespace Player.Core
 {
@@ -25,7 +23,7 @@ namespace Player.Core
             optionsBuilder.UseSqlite(fileName);
         }
 
-        public BitmapImage LoadAlbumArtById(int id, int size)
+        public byte[] GetAlbumArtDataById(int id)
         {
             /* 
              * https://stackoverflow.com/questions/27641606/loading-a-large-amount-of-images-to-be-displayed-in-a-wrappanel
@@ -33,19 +31,7 @@ namespace Player.Core
              * https://stackoverflow.com/questions/34967116/how-to-combine-find-and-asnotracking
              */
 
-            byte[] data = Arts.AsNoTracking().First(a => a.Id == id).Data;
-
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.StreamSource = new MemoryStream(data);
-            bitmap.CreateOptions = BitmapCreateOptions.None;
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.DecodePixelWidth = size;
-            bitmap.DecodePixelHeight = size;
-            bitmap.EndInit();
-            bitmap.Freeze();
-
-            return bitmap;
+            return Arts.AsNoTracking().First(a => a.Id == id).Data;
         }
     }
 }

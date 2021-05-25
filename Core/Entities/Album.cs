@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 using System.Windows.Media.Imaging;
 
 namespace Player.Core.Entities
@@ -12,7 +13,7 @@ namespace Player.Core.Entities
         public uint DiscCount { get; set; }
         //public string AlbumArtUri { get; set; }
 
-        public int AlbumArtId { get; set; }
+        public int? AlbumArtId { get; set; }
         public virtual AlbumArt Art { get; set; }
 
         public List<Track> Tracks { get; set; } = new List<Track>();
@@ -30,7 +31,7 @@ namespace Player.Core.Entities
             get
             {
                 if (artSmall == null)
-                    artSmall = LoadAlbumArt(AlbumArtId, 128);
+                    artSmall = LoadAlbumArt(AlbumArtId, 150);
 
                 return artSmall;
             }
@@ -47,7 +48,7 @@ namespace Player.Core.Entities
             get
             {
                 if (artMedium == null)
-                    artMedium = LoadAlbumArt(AlbumArtId, 256);
+                    artMedium = LoadAlbumArt(AlbumArtId, 300);
 
                 return artMedium;
             }
@@ -64,7 +65,7 @@ namespace Player.Core.Entities
             get
             {
                 if (artBig == null)
-                    artBig = LoadAlbumArt(AlbumArtId, 512);
+                    artBig = LoadAlbumArt(AlbumArtId, 450);
 
                 return artBig;
             }
@@ -75,10 +76,28 @@ namespace Player.Core.Entities
             }
         }
 
-        private static BitmapImage LoadAlbumArt(int id, int size)
+        private static BitmapImage LoadAlbumArt(int? id, int size)
         {
-            using var db = new ApplicationContext();
-            return db.LoadAlbumArtById(id, size);
+            if (id != null)
+            {
+                using var db = new ApplicationContext();
+
+                var data = db.GetAlbumArtDataById((int)id);
+
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.StreamSource = new MemoryStream(data);
+                bitmap.CreateOptions = BitmapCreateOptions.DelayCreation;
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.DecodePixelWidth = size;
+                bitmap.DecodePixelHeight = size;
+                bitmap.EndInit();
+                bitmap.Freeze();
+
+                return bitmap;
+            }
+            else
+                return null;
         }
 
         public override string ToString()

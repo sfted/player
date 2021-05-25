@@ -6,13 +6,14 @@
     xmlns:local="clr-namespace:Player.Views.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:windows="clr-namespace:Player.ViewModels.Windows"
-    Title="{Binding CurrentPage.Title}"
+    Title="{Binding CurrentPage.Title, FallbackValue='Загрузка'}"
     Width="600"
     Height="400"
     d:DataContext="{d:DesignInstance Type=windows:FirstStartupViewModel}"
+    Closing="OnClosing"
     ResizeMode="CanMinimize"
     WindowStartupLocation="CenterScreen"
-    mc:Ignorable="d" Closing="OnClosing">
+    mc:Ignorable="d">
     <Grid>
         <Frame
             Margin="64,16"

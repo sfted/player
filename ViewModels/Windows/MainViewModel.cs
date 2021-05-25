@@ -45,7 +45,8 @@ namespace Player.ViewModels.Windows
                     page = new ArtistViewPage(this) { DataContext = artist };
                 else return;
 
-                Navigation.NavigateTo(page);
+                if(Navigation.CurrentPage.DataContext != page.DataContext)
+                    Navigation.NavigateTo(page);
             });
         }
 

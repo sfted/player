@@ -95,11 +95,25 @@
                     Text="{Binding Year}" />
             </StackPanel>
 
-            <Image
+            <Grid
                 Grid.Column="0"
-                Height="200"
-                VerticalAlignment="Center"
-                Source="{Binding ArtMedium}" />
+                Width="200"
+                Height="200">
+                <Image
+                    VerticalAlignment="Center"
+                    Panel.ZIndex="2"
+                    Source="{Binding ArtMedium}" />
+                <Border
+                    Panel.ZIndex="1"
+                    Background="#efefef"
+                    CornerRadius="200">
+                    <Path
+                        Margin="64"
+                        Data="{StaticResource icon-album}"
+                        Fill="Gray"
+                        Stretch="UniformToFill" />
+                </Border>
+            </Grid>
         </Grid>
 
         <!--<TextBlock
@@ -119,7 +133,9 @@
             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid HorizontalAlignment="Stretch">
+                    <Grid
+                        Margin="16,12,16,12"
+                        HorizontalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition
                                 Width="Auto"
@@ -130,14 +146,15 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock
                             Grid.Column="0"
-                            Margin="16,8,8,8"
+                            Margin="0,0,8,0"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="15"
+                            Foreground="Gray"
                             Text="{Binding Number, StringFormat='{}{0}.'}" />
                         <TextBlock
                             Grid.Column="1"
-                            Margin="8,8,8,8"
+                            Margin="8,0,8,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             FontSize="15"
@@ -146,7 +163,7 @@
                         <!--  По-хорошему надо писать юзер контрол, но мне лень  -->
                         <ItemsControl
                             Grid.Column="2"
-                            Margin="16,8,8,8"
+                            Margin="8,0,8,0"
                             VerticalAlignment="Center"
                             ItemsSource="{Binding Artists}">
                             <ItemsControl.ItemsPanel>
@@ -216,7 +233,7 @@
                             Text="{Binding Album.Year}" />-->
                         <TextBlock
                             Grid.Column="3"
-                            Margin="16,8,8,8"
+                            Margin="8,0,8,0"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             FontSize="13"

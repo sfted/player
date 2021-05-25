@@ -43,11 +43,16 @@
             <Button
                 Margin="16,16,0,16"
                 Padding="8"
-                Background="White"
                 BorderBrush="White"
                 Command="{Binding NavigateBackCommand}"
-                Content="{StaticResource icon-back}"
-                IsCancel="True" />
+                IsCancel="True"
+                Style="{StaticResource FlatButtonStyle}"
+                ToolTip="Назад">
+                <Path
+                    Data="{StaticResource icon-back}"
+                    Fill="Black"
+                    Stretch="UniformToFill" />
+            </Button>
             <TextBlock
                 Margin="16"
                 FontSize="24"
