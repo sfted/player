@@ -42,7 +42,13 @@ namespace Player.ViewModels.Windows
                     page = new AlbumViewPage(this) { DataContext = album };
                 }
                 else if (obj is Artist artist)
+                {
                     page = new ArtistViewPage(this) { DataContext = artist };
+                }
+                else if(obj is Folder folder)
+                {
+                    page = new FolderViewPage(this, folder);
+                }
                 else return;
 
                 if(Navigation.CurrentPage.DataContext != page.DataContext)

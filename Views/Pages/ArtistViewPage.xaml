@@ -94,7 +94,7 @@
                                     FontWeight="SemiBold"
                                     Text="{Binding Title}"
                                     TextTrimming="CharacterEllipsis" />
-                                <!--  По-хорошему надо писать юзер контрол, но мне лень  -->
+
                                 <ItemsControl
                                     Grid.Column="2"
                                     Margin="8,0,8,0"

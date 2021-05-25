@@ -11,6 +11,7 @@ namespace Player.Core
         public DbSet<AlbumArt> Arts { get; set; }
         public DbSet<Artist> Artists { get; set; }
         public DbSet<Genre> Genres { get; set; }
+        public DbSet<Folder> Folders { get; set; }
 
         public ApplicationContext()
         {
