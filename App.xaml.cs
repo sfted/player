@@ -15,7 +15,7 @@ namespace Player
         public static readonly string DATABASE_URI = APPLICATION_DIRECTORY + "database.sqlite";
         public static readonly string SETTINGS_URI = APPLICATION_DIRECTORY + "settings.json";
         //public static readonly string LOG_URI = APPLICATION_DIRECTORY + "logs\\.log";
-        public static readonly string ALBUM_ARTS_DIRECTORY = APPLICATION_DIRECTORY + "arts\\";
+        //public static readonly string ALBUM_ARTS_DIRECTORY = APPLICATION_DIRECTORY + "arts\\";
 
         public App()
         {
@@ -33,8 +33,8 @@ namespace Player
             if (!Directory.Exists(APPLICATION_DIRECTORY))
                 Directory.CreateDirectory(APPLICATION_DIRECTORY);
 
-            if (!Directory.Exists(ALBUM_ARTS_DIRECTORY))
-                Directory.CreateDirectory(ALBUM_ARTS_DIRECTORY);
+            //if (!Directory.Exists(ALBUM_ARTS_DIRECTORY))
+            //    Directory.CreateDirectory(ALBUM_ARTS_DIRECTORY);
         }
 
         private static void InitializeLogger()

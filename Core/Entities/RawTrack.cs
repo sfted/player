@@ -1,12 +1,5 @@
-﻿using Serilog;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
-using TagLib;
 
 namespace Player.Core.Entities
 {
@@ -25,7 +18,7 @@ namespace Player.Core.Entities
         public uint AlbumTrackCount { get; set; }
         public uint DiscNumber { get; set; }
         public uint AlbumDiscCount { get; set; }
-        public IPicture AlbumArt { get; set; }
+        public byte[] AlbumArt { get; set; }
         public int BitRate { get; set; }
         public TimeSpan Duration { get; set; }
 
@@ -81,7 +74,7 @@ namespace Player.Core.Entities
             AlbumDiscCount = tfile.Tag.DiscCount;
 
             if (tfile.Tag.Pictures.Length > 0)
-                AlbumArt = tfile.Tag.Pictures[0];
+                AlbumArt = tfile.Tag.Pictures[0].Data.Data;
 
             BitRate = tfile.Properties.AudioBitrate;
             Duration = tfile.Properties.Duration;

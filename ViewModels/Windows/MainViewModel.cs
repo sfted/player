@@ -1,13 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Player.Core;
-using Player.Core.Entities;
+﻿using Player.Core.Entities;
 using Player.Core.Utils;
 using Player.Core.Utils.MVVM;
-using Player.ViewModels.Pages;
 using Player.Views.Pages;
-using Serilog;
-using System.Collections.ObjectModel;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Player.ViewModels.Windows

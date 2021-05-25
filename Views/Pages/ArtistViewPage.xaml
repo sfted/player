@@ -36,10 +36,9 @@
                                 Height="Auto"
                                 SharedSizeGroup="A" />
                         </Grid.RowDefinitions>
-                        <!--  TODO: переписать все нахуй!  -->
                         <Image
                             Grid.Row="0"
-                            Source="{Binding AlbumArtUri}"
+                            Source="{Binding ArtMedium}"
                             Stretch="UniformToFill" />
                         <StackPanel Grid.Row="1">
                             <TextBlock

@@ -2,7 +2,9 @@
     x:Class="Player.Views.Pages.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="clr-namespace:Player.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:e="clr-namespace:Player.Core.Entities"
     xmlns:local="clr-namespace:Player.ViewModels.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Моя музыка"
@@ -11,6 +13,131 @@
     d:DesignWidth="800"
     FontFamily="Open Sans"
     mc:Ignorable="d">
+    <Page.Resources>
+        <DataTemplate
+            x:Key="AlbumDataTemplate"
+            DataType="{x:Type e:Album}">
+            <StackPanel Margin="16">
+                <Border
+                    Width="128"
+                    Height="128"
+                    Background="White"
+                    BorderThickness="0">
+                    <c:CustomImage
+                        x:Name="Art"
+                        Stretch="UniformToFill">
+                        <Image.Triggers>
+                            <EventTrigger RoutedEvent="c:CustomImage.SourceChanged">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetProperty="(Image.Opacity)"
+                                            From="0"
+                                            To="1"
+                                            Duration="0:0:0.25" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Image.Triggers>
+                    </c:CustomImage>
+                </Border>
+                <TextBlock Text="{Binding Title}" />
+            </StackPanel>
+            <DataTemplate.Triggers>
+                <DataTrigger
+                    Binding="{Binding Path=(c:EffectiveScrollViewer.IsInViewport), UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"
+                    Value="True">
+                    <Setter TargetName="Art" Property="Source" Value="{Binding ArtSmall}" />
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding Path=(c:EffectiveScrollViewer.IsInViewport), UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"
+                    Value="False">
+                    <Setter TargetName="Art" Property="Source" Value="{x:Null}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!--<DataTemplate>
+            <Grid
+                Margin="6"
+                VerticalAlignment="Top"
+                Cursor="Hand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition
+                        Height="Auto"
+                        SharedSizeGroup="A" />
+                </Grid.RowDefinitions>
+                <Image
+                    Grid.Row="0"
+                    Source="{Binding AlbumArtUri}"
+                    Stretch="UniformToFill" />
+                <StackPanel Grid.Row="1">
+                    <TextBlock
+                        Margin="0,3,0,0"
+                        FontSize="13"
+                        FontWeight="SemiBold"
+                        Text="{Binding Title}"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTip="{Binding Title}" />
+                    <ItemsControl
+                        Margin="0,3,0,0"
+                        ItemsSource="{Binding Artists}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Margin="0,0,3,0"
+                                    Cursor="Hand"
+                                    FontSize="13"
+                                    Text="{Binding Name}"
+                                    TextTrimming="CharacterEllipsis"
+                                    ToolTip="{Binding Name}">
+                                    <TextBlock.InputBindings>
+                                        <MouseBinding
+                                            Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                            CommandParameter="{Binding}"
+                                            Gesture="LeftClick" />
+                                    </TextBlock.InputBindings>
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="Gray" />
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Foreground" Value="DodgerBlue" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock
+                        Margin="0,3,0,0"
+                        FontSize="13"
+                        Foreground="Gray"
+                        Text="{Binding Year}" />
+        <Button
+                                        Margin="0,4,0,0"
+                                        Padding="8,4"
+                                        Command="{Binding DataContext.MainViewModel.Bruh, RelativeSource={RelativeSource AncestorType=Page}}"
+                                        CommandParameter="{Binding}"
+                                        Content="Открыть" />
+        </StackPanel>
+                <Grid.InputBindings>
+                    <MouseBinding
+                        Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                        CommandParameter="{Binding}"
+                        Gesture="LeftClick" />
+                </Grid.InputBindings>
+            </Grid>
+        </DataTemplate>-->
+    </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -133,7 +260,7 @@
             </TabItem>
             <TabItem Header="Альбомы">
                 <!--  По-хорошему надо писать юзер контрол, но мне лень  -->
-                <ListView
+                <!--<ListView
                     BorderThickness="0"
                     Grid.IsSharedSizeScope="True"
                     ItemsSource="{Binding Albums}"
@@ -163,7 +290,6 @@
                                         Text="{Binding Title}"
                                         TextTrimming="CharacterEllipsis"
                                         ToolTip="{Binding Title}" />
-                                    <!--  По-хорошему надо писать юзер контрол, но мне лень  -->
                                     <ItemsControl
                                         Margin="0,3,0,0"
                                         ItemsSource="{Binding Artists}">
@@ -206,12 +332,6 @@
                                         FontSize="13"
                                         Foreground="Gray"
                                         Text="{Binding Year}" />
-                                    <!--<Button
-                                        Margin="0,4,0,0"
-                                        Padding="8,4"
-                                        Command="{Binding DataContext.MainViewModel.Bruh, RelativeSource={RelativeSource AncestorType=Page}}"
-                                        CommandParameter="{Binding}"
-                                        Content="Открыть" />-->
                                 </StackPanel>
                                 <Grid.InputBindings>
                                     <MouseBinding
@@ -230,7 +350,125 @@
                                 Orientation="Horizontal" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
-                </ListView>
+                </ListView>-->
+                <ListBox
+                    BorderThickness="0"
+                    Grid.IsSharedSizeScope="True"
+                    ItemsSource="{Binding Albums}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid
+                                Margin="6"
+                                VerticalAlignment="Top"
+                                Cursor="Hand">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition
+                                        Height="Auto"
+                                        SharedSizeGroup="A" />
+                                </Grid.RowDefinitions>
+                                <Border
+                                    Width="150"
+                                    Height="150"
+                                    Background="White"
+                                    BorderThickness="0">
+                                    <c:CustomImage
+                                        x:Name="Art"
+                                        Stretch="UniformToFill">
+                                        <Image.Triggers>
+                                            <EventTrigger RoutedEvent="c:CustomImage.SourceChanged">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation
+                                                            Storyboard.TargetProperty="(Image.Opacity)"
+                                                            From="0"
+                                                            To="1"
+                                                            Duration="0:0:0.1" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                        </Image.Triggers>
+                                    </c:CustomImage>
+                                </Border>
+                                <StackPanel Grid.Row="1">
+                                    <TextBlock
+                                        Margin="0,3,0,0"
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding Title}"
+                                        TextTrimming="CharacterEllipsis"
+                                        ToolTip="{Binding Title}" />
+                                    <ItemsControl
+                                        Margin="0,3,0,0"
+                                        ItemsSource="{Binding Artists}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    Margin="0,0,3,0"
+                                                    Cursor="Hand"
+                                                    FontSize="13"
+                                                    Text="{Binding Name}"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    ToolTip="{Binding Name}">
+                                                    <TextBlock.InputBindings>
+                                                        <MouseBinding
+                                                            Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                            CommandParameter="{Binding}"
+                                                            Gesture="LeftClick" />
+                                                    </TextBlock.InputBindings>
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="Gray" />
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Foreground" Value="DodgerBlue" />
+                                                                </Trigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <TextBlock
+                                        Margin="0,3,0,0"
+                                        FontSize="13"
+                                        Foreground="Gray"
+                                        Text="{Binding Year}" />
+                                </StackPanel>
+                                <Grid.InputBindings>
+                                    <MouseBinding
+                                        Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                        CommandParameter="{Binding}"
+                                        Gesture="LeftClick" />
+                                </Grid.InputBindings>
+                            </Grid>
+                            <DataTemplate.Triggers>
+                                <DataTrigger
+                                    Binding="{Binding Path=(c:EffectiveScrollViewer.IsInViewport), RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"
+                                    Value="True">
+                                    <Setter TargetName="Art" Property="Source" Value="{Binding ArtSmall, IsAsync=True}" />
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.Template>
+                        <ControlTemplate>
+                            <c:EffectiveScrollViewer
+                                HorizontalScrollBarVisibility="Disabled"
+                                VerticalScrollBarVisibility="Auto">
+                                <WrapPanel
+                                    IsItemsHost="True"
+                                    ItemWidth="164" />
+                            </c:EffectiveScrollViewer>
+                        </ControlTemplate>
+                    </ListBox.Template>
+                </ListBox>
             </TabItem>
             <TabItem Header="Исполнители">
                 <ListView

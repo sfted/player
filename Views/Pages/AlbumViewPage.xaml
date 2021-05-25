@@ -99,7 +99,7 @@
                 Grid.Column="0"
                 Height="200"
                 VerticalAlignment="Center"
-                Source="{Binding AlbumArtUri}" />
+                Source="{Binding ArtMedium}" />
         </Grid>
 
         <!--<TextBlock

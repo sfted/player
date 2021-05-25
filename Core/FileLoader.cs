@@ -1,13 +1,10 @@
 ﻿using Player.Core.Entities;
 using Player.Core.Utils;
-using Player.Core.Utils.Extensions;
 using Player.Core.Utils.MVVM;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Media.Imaging;
@@ -25,12 +22,12 @@ namespace Player.Core
             "mp3"
         };
 
-        private ApplicationContext database = new ApplicationContext();
+        private readonly ApplicationContext database = new ApplicationContext();
         private List<Album> albums { get; set; } = new List<Album>();
         private List<Artist> artists { get; set; } = new List<Artist>();
         private List<Genre> genres { get; set; } = new List<Genre>();
 
-        private BackgroundWorker worker = new BackgroundWorker();
+        private readonly BackgroundWorker worker = new BackgroundWorker();
 
         public event Action LoadingCompleted;
 
@@ -90,7 +87,6 @@ namespace Player.Core
 
         public FileLoader(string pathToLibrary)
         {
-            // ✅ TODO: дописать класс для интеграции с UI 
             worker.WorkerReportsProgress = true;
             worker.DoWork += (object sender, DoWorkEventArgs e) => LoadFiles(pathToLibrary);
             worker.ProgressChanged += (object sender, ProgressChangedEventArgs e) => ProgressPercentage = e.ProgressPercentage;
@@ -163,35 +159,42 @@ namespace Player.Core
                 FileSize = raw.FileSize,
                 Duration = raw.Duration,
                 Number = raw.TrackNumber,
-                Title = raw.Title
+                Title = raw.Title,
             };
             database.Tracks.Add(track);
 
-            var album = FindExistingOrCreateNewAlbum(raw.AlbumTitle, raw.AlbumYear, raw.AlbumTrackCount, raw.AlbumDiscCount);
+            var album = FindExistingOrCreateNewAlbum
+            (
+                raw.AlbumTitle,
+                raw.AlbumYear,
+                raw.AlbumTrackCount,
+                raw.AlbumDiscCount,
+                raw.AlbumArt
+            );
             album.Tracks.Add(track);
 
             foreach (string artistName in raw.Artists) FindExistingOrCreateNewArtist(artistName).Tracks.Add(track);
             foreach (string artistName in raw.AlbumArtists) FindExistingOrCreateNewArtist(artistName).Albums.Add(album);
             foreach (string genreName in raw.AlbumGenres) FindExistingOrCreateNewGenre(genreName).Albums.Add(album);
-            database.SaveChanges();
+            //database.SaveChanges();
 
-            if (raw.AlbumArt != null)
-            {
-                album.RenderAlbumArtUri(App.ALBUM_ARTS_DIRECTORY);
-                if (!System.IO.File.Exists(album.AlbumArtUri))
-                    SaveAlbumArt(album.AlbumArtUri, raw.AlbumArt.Data.Data);
-            }
-            else
-            {
-                // еще не протестировано, не уверен будет ли работать
-                // TODO: протестировать (да и вообще переделать к хуям???) при построении UI.
-                album.AlbumArtUri = @"pack://application:,,,/Player;component/Resources/Images/album-art-placeholder.jpg";
-            }
+            //if (raw.AlbumArt != null)
+            //{
+            //    album.RenderAlbumArtUri(App.ALBUM_ARTS_DIRECTORY);
+            //    if (!System.IO.File.Exists(album.AlbumArtUri))
+            //        SaveAlbumArt(album.AlbumArtUri, raw.AlbumArt.Data.Data);
+            //}
+            //else
+            //{
+            //    // еще не протестировано, не уверен будет ли работать
+            //    // TODO: протестировать (да и вообще переделать к хуям???) при построении UI.
+            //    album.AlbumArtUri = @"pack://application:,,,/Player;component/Resources/Images/album-art-placeholder.jpg";
+            //}
 
             _ = raw;
         }
 
-        private Album FindExistingOrCreateNewAlbum(string title, uint year, uint trackCount, uint discCount)
+        private Album FindExistingOrCreateNewAlbum(string title, uint year, uint trackCount, uint discCount, byte[] albumArt)
         {
             // я не думаю, что какие-то два случайных исполнителя выпустят в один и тот же год
             // по альбому в одинаковыми названиями и одинаковым количеством треков.
@@ -199,18 +202,42 @@ namespace Player.Core
             var album = albums.Find(ByAlbumTitleYearAndTrackCount(title, year, trackCount));
             if (album == null)
             {
+                var art = new AlbumArt { Data = albumArt };
                 album = new Album
                 {
                     DiscCount = discCount,
                     Title = title,
                     TrackCount = trackCount,
-                    Year = year
+                    Year = year,
+                    Art = art
                 };
                 albums.Add(album);
                 database.Albums.Add(album);
+                database.Arts.Add(art);
             }
             return album;
         }
+
+        //private Album FindExistingOrCreateNewAlbumArt(string title, uint year, uint trackCount, uint discCount)
+        //{
+        //    // я не думаю, что какие-то два случайных исполнителя выпустят в один и тот же год
+        //    // по альбому в одинаковыми названиями и одинаковым количеством треков.
+        //    // да еще и каков шанс что два таких альбома окажутся в медиатеке юзернейма
+        //    var album = albums.Find(ByAlbumTitleYearAndTrackCount(title, year, trackCount));
+        //    if (album == null)
+        //    {
+        //        album = new Album
+        //        {
+        //            DiscCount = discCount,
+        //            Title = title,
+        //            TrackCount = trackCount,
+        //            Year = year
+        //        };
+        //        albums.Add(album);
+        //        database.Albums.Add(album);
+        //    }
+        //    return album;
+        //}
 
         private Artist FindExistingOrCreateNewArtist(string name)
         {
