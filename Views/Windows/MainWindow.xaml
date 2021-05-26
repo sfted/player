@@ -17,10 +17,6 @@
     Loaded="OnLoaded"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    <Window.Resources>
-        <utils:IsPlayingToPlayPauseIconsConverter x:Key="IsPlayingToPlayPauseIconsConverter" />
-        <utils:PlayerIsTrackSetVisibilityConverter x:Key="PlayerIsTrackSetVisibilityConverter" />
-    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

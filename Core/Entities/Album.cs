@@ -21,10 +21,27 @@ namespace Player.Core.Entities
         public List<Artist> Artists { get; set; } = new List<Artist>();
         public List<Genre> Genres { get; set; } = new List<Genre>();
 
-
+        private BitmapSource artTiny;
         private BitmapSource artSmall;
         private BitmapSource artMedium;
         private BitmapSource artBig;
+
+        [NotMapped]
+        public BitmapSource ArtTiny
+        {
+            get
+            {
+                if (artTiny == null)
+                    artTiny = LoadAlbumArt(AlbumArtId, 50);
+
+                return artTiny;
+            }
+            set
+            {
+                artTiny = value;
+                NotifyPropertyChanged(nameof(ArtTiny));
+            }
+        }
 
         [NotMapped]
         public BitmapSource ArtSmall

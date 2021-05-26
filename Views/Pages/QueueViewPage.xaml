@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Player.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="ThisPage"
     Title="Очередь воспроизведения"
     d:DataContext="{d:DesignInstance Type=core:Player}"
     d:DesignHeight="450"
@@ -17,12 +18,13 @@
             HorizontalContentAlignment="Stretch"
             BorderThickness="0"
             ItemsSource="{Binding PlaybackQueue}"
-            ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            SelectedItem="{Binding CurrentTrack, Mode=OneWay}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Border Background="Transparent">
                         <Grid
-                            Margin="16,12,16,12"
+                            Margin="12,4,12,4"
                             HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -30,24 +32,29 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="0.75*" />
-                                <ColumnDefinition Width="0.75*" />
                             </Grid.ColumnDefinitions>
 
-                            <ContentControl
+                            <Grid
                                 Grid.Column="0"
-                                Margin="8,0,12,0">
-                                <Path
-                                    MaxHeight="16"
-                                    HorizontalAlignment="Center"
+                                Width="32"
+                                Height="32"
+                                Margin="0,0,8,0">
+
+                                <Image
                                     VerticalAlignment="Center"
+                                    Panel.ZIndex="2"
+                                    Source="{Binding Album.ArtTiny}" />
+                                <Path
+                                    Margin="8"
+                                    Panel.ZIndex="1"
                                     Data="{StaticResource icon-audiotrack}"
                                     Fill="Gray"
                                     Stretch="Uniform" />
-                            </ContentControl>
+                            </Grid>
 
                             <TextBlock
                                 Grid.Column="1"
-                                Margin="8,0,8,0"
+                                Margin="8,8,8,8"
                                 VerticalAlignment="Center"
                                 FontSize="13"
                                 FontWeight="SemiBold"
@@ -75,7 +82,7 @@
                                             ToolTip="{Binding Name}">
                                             <TextBlock.InputBindings>
                                                 <MouseBinding
-                                                    Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                    Command="{Binding MainViewModel.OpenEntityCommand, ElementName=ThisPage}"
                                                     CommandParameter="{Binding}"
                                                     Gesture="LeftClick" />
                                             </TextBlock.InputBindings>
@@ -95,7 +102,7 @@
                                 ToolTip="{Binding Album.Title}">
                                 <TextBlock.InputBindings>
                                     <MouseBinding
-                                        Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                        Command="{Binding MainViewModel.OpenEntityCommand, ElementName=ThisPage}"
                                         CommandParameter="{Binding Album}"
                                         Gesture="LeftClick" />
                                 </TextBlock.InputBindings>
@@ -103,34 +110,27 @@
 
                             <TextBlock
                                 Grid.Column="4"
-                                Margin="8,0,8,0"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                FontSize="13"
-                                Text="{Binding Album.Year}" />
-
-                            <TextBlock
-                                Grid.Column="5"
                                 Margin="8,0,0,0"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 FontSize="13"
-                                Text="{Binding Duration, StringFormat='{}{0:hh\\:mm\\:ss}'}" />
+                                Foreground="Gray"
+                                Text="{Binding Duration, StringFormat='{}{0:mm\\:ss}'}" />
                         </Grid>
-                        <!--<Border.InputBindings>
+                        <Border.InputBindings>
                             <MouseBinding
-                                Command="{Binding DataContext.MainViewModel.Player.OpenAndPlayCommand, ElementName=ThisPage}"
+                                Command="{Binding DataContext.OpenAndPlayCommand, ElementName=ThisPage}"
                                 Gesture="LeftClick">
                                 <MouseBinding.CommandParameter>
                                     <MultiBinding Converter="{StaticResource UselessButNeededConverter}">
                                         <Binding Path="" />
                                         <Binding
                                             ElementName="ThisPage"
-                                            Path="DataContext.Tracks" />
+                                            Path="DataContext.PlaybackQueue" />
                                     </MultiBinding>
                                 </MouseBinding.CommandParameter>
                             </MouseBinding>
-                        </Border.InputBindings>-->
+                        </Border.InputBindings>
                     </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>

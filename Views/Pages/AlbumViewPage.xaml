@@ -6,6 +6,7 @@
     xmlns:e="clr-namespace:Player.Core.Entities"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:utils="clr-namespace:Player.Core.Utils"
+    x:Name="ThisPage"
     Title="Альбом"
     d:DataContext="{d:DesignInstance Type=e:Album}"
     d:DesignHeight="450"
@@ -53,7 +54,7 @@
                                 ToolTip="{Binding Name}">
                                 <TextBlock.InputBindings>
                                     <MouseBinding
-                                        Command="{Binding MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                        Command="{Binding MainViewModel.OpenEntityCommand, ElementName=ThisPage}"
                                         CommandParameter="{Binding}"
                                         Gesture="LeftClick" />
                                 </TextBlock.InputBindings>
@@ -81,7 +82,7 @@
                                 ToolTip="{Binding Name}">
                                 <TextBlock.InputBindings>
                                     <MouseBinding
-                                        Command="{Binding MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                        Command="{Binding MainViewModel.OpenEntityCommand, ElementName=ThisPage}"
                                         CommandParameter="{Binding}"
                                         Gesture="LeftClick" />
                                 </TextBlock.InputBindings>
@@ -116,13 +117,6 @@
             </Grid>
         </Grid>
 
-        <!--<TextBlock
-            Grid.Row="2"
-            Margin="16"
-            FontSize="24"
-            FontWeight="Light"
-            Text="Треки" />-->
-
         <ListView
             Grid.Row="1"
             HorizontalContentAlignment="Stretch"
@@ -133,112 +127,96 @@
             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid
-                        Margin="16,12,16,12"
-                        HorizontalAlignment="Stretch">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition
-                                Width="Auto"
-                                SharedSizeGroup="NUMBER" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="0.75*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock
-                            Grid.Column="0"
-                            Margin="0,0,8,0"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            FontSize="15"
-                            Foreground="Gray"
-                            Text="{Binding Number, StringFormat='{}{0}.'}" />
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="8,0,8,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            FontSize="15"
-                            Text="{Binding Title}"
-                            TextTrimming="CharacterEllipsis" />
-                        <!--  По-хорошему надо писать юзер контрол, но мне лень  -->
-                        <ItemsControl
-                            Grid.Column="2"
-                            Margin="8,0,8,0"
-                            VerticalAlignment="Center"
-                            ItemsSource="{Binding Artists}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <VirtualizingStackPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock
-                                        Margin="0,0,3,0"
-                                        Cursor="Hand"
-                                        FontSize="13"
-                                        Text="{Binding Name}"
-                                        TextTrimming="CharacterEllipsis"
-                                        ToolTip="{Binding Name}">
-                                        <TextBlock.InputBindings>
-                                            <MouseBinding
-                                                Command="{Binding MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                                CommandParameter="{Binding}"
-                                                Gesture="LeftClick" />
-                                        </TextBlock.InputBindings>
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Foreground" Value="DodgerBlue" />
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                        <!--<TextBlock
-                            Grid.Column="2"
-                            Margin="16,8,8,8"
-                            VerticalAlignment="Center"
-                            Cursor="Hand"
-                            FontSize="13"
-                            Text="{Binding Album.Title}"
-                            TextTrimming="CharacterEllipsis"
-                            ToolTip="{Binding Album.Title}">
-                            <TextBlock.InputBindings>
-                                <MouseBinding
-                                    Command="{Binding MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                    CommandParameter="{Binding Album}"
-                                    Gesture="LeftClick" />
-                            </TextBlock.InputBindings>
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Foreground" Value="DodgerBlue" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>-->
-                        <!--<TextBlock
-                            Grid.Column="3"
-                            Margin="16,8,8,8"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            FontSize="13"
-                            Text="{Binding Album.Year}" />-->
-                        <TextBlock
-                            Grid.Column="3"
-                            Margin="8,0,8,0"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            FontSize="13"
-                            Text="{Binding Duration, StringFormat='{}{0:hh\\:mm\\:ss}'}" />
-                    </Grid>
+                    <Border Background="Transparent">
+                        <Grid
+                            Margin="16,12,16,12"
+                            HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition
+                                    Width="Auto"
+                                    SharedSizeGroup="NUMBER" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="0.75*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.Column="0"
+                                Margin="0,0,8,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                FontSize="15"
+                                Foreground="Gray"
+                                Text="{Binding Number, StringFormat='{}{0}.'}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                Margin="8,0,8,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                FontSize="15"
+                                Text="{Binding Title}"
+                                TextTrimming="CharacterEllipsis" />
+                            <ItemsControl
+                                Grid.Column="2"
+                                Margin="8,0,8,0"
+                                VerticalAlignment="Center"
+                                ItemsSource="{Binding Artists}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            Margin="0,0,3,0"
+                                            Cursor="Hand"
+                                            FontSize="13"
+                                            Text="{Binding Name}"
+                                            TextTrimming="CharacterEllipsis"
+                                            ToolTip="{Binding Name}">
+                                            <TextBlock.InputBindings>
+                                                <MouseBinding
+                                                    Command="{Binding MainViewModel.OpenEntityCommand, ElementName=ThisPage}"
+                                                    CommandParameter="{Binding}"
+                                                    Gesture="LeftClick" />
+                                            </TextBlock.InputBindings>
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Foreground" Value="DodgerBlue" />
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock
+                                Grid.Column="3"
+                                Margin="8,0,8,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                FontSize="13"
+                                Foreground="Gray"
+                                Text="{Binding Duration, StringFormat='{}{0:mm\\:ss}'}" />
+                        </Grid>
+                        <Border.InputBindings>
+                            <MouseBinding
+                                Command="{Binding MainViewModel.Player.OpenAndPlayCommand, ElementName=ThisPage}"
+                                Gesture="LeftClick">
+                                <MouseBinding.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource UselessButNeededConverter}">
+                                        <Binding Path="" />
+                                        <Binding
+                                            ElementName="ThisPage"
+                                            Path="DataContext.Tracks" />
+                                    </MultiBinding>
+                                </MouseBinding.CommandParameter>
+                            </MouseBinding>
+                        </Border.InputBindings>
+                    </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

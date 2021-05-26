@@ -6,170 +6,193 @@
     xmlns:entities="clr-namespace:Player.Core.Entities"
     xmlns:local="clr-namespace:Player.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="ThisPage"
     Title="{Binding Name}"
     d:DataContext="{d:DesignInstance Type=entities:Folder}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-
     <Grid>
         <ScrollViewer
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <ItemsControl
+                <ListBox
                     HorizontalContentAlignment="Stretch"
                     BorderThickness="0"
                     ItemsSource="{Binding Folders}">
-                    <ItemsControl.ItemTemplate>
+                    <ListBox.Template>
+                        <ControlTemplate>
+                            <ItemsPresenter />
+                        </ControlTemplate>
+                    </ListBox.Template>
+                    <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Grid
-                                Margin="16,12,16,12"
-                                HorizontalAlignment="Stretch">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+                            <Border Background="Transparent">
+                                <Grid
+                                    Margin="16,12,16,12"
+                                    HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
 
-                                <ContentControl
-                                    Grid.Column="0"
-                                    Margin="8,0,12,0">
-                                    <Path
-                                        MaxHeight="16"
-                                        HorizontalAlignment="Center"
+                                    <ContentControl
+                                        Grid.Column="0"
+                                        Margin="8,0,12,0">
+                                        <Path
+                                            MaxHeight="16"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Data="{StaticResource icon-folder}"
+                                            Fill="Gray"
+                                            Stretch="Uniform" />
+                                    </ContentControl>
+
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        Margin="8,0,8,0"
+                                        HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Data="{StaticResource icon-folder}"
-                                        Fill="Gray"
-                                        Stretch="Uniform" />
-                                </ContentControl>
-
-                                <TextBlock
-                                    Grid.Column="1"
-                                    Margin="8,0,8,0"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    FontSize="13"
-                                    Style="{StaticResource ClickableTextBlockStyle}"
-                                    Text="{Binding Name}"
-                                    ToolTip="{Binding Name}">
-                                    <TextBlock.InputBindings>
-                                        <MouseBinding
-                                            Command="{Binding MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                            CommandParameter="{Binding}"
-                                            Gesture="LeftClick" />
-                                    </TextBlock.InputBindings>
-                                </TextBlock>
-                            </Grid>
+                                        FontSize="13"
+                                        Style="{StaticResource ClickableTextBlockStyle}"
+                                        Text="{Binding Name}"
+                                        ToolTip="{Binding Name}" />
+                                </Grid>
+                                <Border.InputBindings>
+                                    <MouseBinding
+                                        Command="{Binding MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                        CommandParameter="{Binding}"
+                                        Gesture="LeftClick" />
+                                </Border.InputBindings>
+                            </Border>
                         </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-                <ItemsControl
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <ListBox
                     HorizontalContentAlignment="Stretch"
                     BorderThickness="0"
-                    ItemsSource="{Binding Tracks}"
-                    ScrollViewer.CanContentScroll="False"
-                    ScrollViewer.IsDeferredScrollingEnabled="True">
-                    <ItemsControl.ItemTemplate>
+                    ItemsSource="{Binding Tracks}">
+                    <ListBox.Template>
+                        <ControlTemplate>
+                            <ItemsPresenter />
+                        </ControlTemplate>
+                    </ListBox.Template>
+                    <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Grid
-                                Margin="16,12,16,12"
-                                HorizontalAlignment="Stretch">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="0.75*" />
-                                    <ColumnDefinition Width="0.75*" />
-                                </Grid.ColumnDefinitions>
+                            <Border Background="Transparent">
+                                <Grid
+                                    Margin="12,4,12,4"
+                                    HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="0.75*" />
+                                    </Grid.ColumnDefinitions>
 
-                                <ContentControl
-                                    Grid.Column="0"
-                                    Margin="8,0,12,0">
-                                    <Path
-                                        MaxHeight="16"
-                                        HorizontalAlignment="Center"
+                                    <Grid
+                                        Grid.Column="0"
+                                        Width="32"
+                                        Height="32"
+                                        Margin="0,0,8,0">
+
+                                        <Image
+                                            VerticalAlignment="Center"
+                                            Panel.ZIndex="2"
+                                            Source="{Binding Album.ArtTiny}" />
+                                        <Path
+                                            Margin="8"
+                                            Panel.ZIndex="1"
+                                            Data="{StaticResource icon-audiotrack}"
+                                            Fill="Gray"
+                                            Stretch="Uniform" />
+                                    </Grid>
+
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        Margin="8,8,8,8"
                                         VerticalAlignment="Center"
-                                        Data="{StaticResource icon-audiotrack}"
-                                        Fill="Gray"
-                                        Stretch="Uniform" />
-                                </ContentControl>
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding Title}"
+                                        TextTrimming="CharacterEllipsis"
+                                        ToolTip="{Binding Title}" />
 
-                                <TextBlock
-                                    Grid.Column="1"
-                                    Margin="8,0,8,0"
-                                    VerticalAlignment="Center"
-                                    FontSize="13"
-                                    FontWeight="SemiBold"
-                                    Text="{Binding Title}"
-                                    TextTrimming="CharacterEllipsis"
-                                    ToolTip="{Binding Title}" />
+                                    <ItemsControl
+                                        Grid.Column="2"
+                                        Margin="8,0,8,0"
+                                        VerticalAlignment="Center"
+                                        ItemsSource="{Binding Artists}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    Margin="0,0,3,0"
+                                                    FontSize="13"
+                                                    Style="{StaticResource ClickableTextBlockStyle}"
+                                                    Text="{Binding Name}"
+                                                    ToolTip="{Binding Name}">
+                                                    <TextBlock.InputBindings>
+                                                        <MouseBinding
+                                                            Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                            CommandParameter="{Binding}"
+                                                            Gesture="LeftClick" />
+                                                    </TextBlock.InputBindings>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
 
-                                <ItemsControl
-                                    Grid.Column="2"
-                                    Margin="8,0,8,0"
-                                    VerticalAlignment="Center"
-                                    ItemsSource="{Binding Artists}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <VirtualizingStackPanel Orientation="Horizontal" />
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                Margin="0,0,3,0"
-                                                FontSize="13"
-                                                Style="{StaticResource ClickableTextBlockStyle}"
-                                                Text="{Binding Name}"
-                                                ToolTip="{Binding Name}">
-                                                <TextBlock.InputBindings>
-                                                    <MouseBinding
-                                                        Command="{Binding MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                                        CommandParameter="{Binding}"
-                                                        Gesture="LeftClick" />
-                                                </TextBlock.InputBindings>
-                                            </TextBlock>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
+                                    <TextBlock
+                                        Grid.Column="3"
+                                        Margin="8,0,8,0"
+                                        VerticalAlignment="Center"
+                                        Cursor="Hand"
+                                        FontSize="13"
+                                        Style="{StaticResource ClickableTextBlockStyle}"
+                                        Text="{Binding Album.Title}"
+                                        ToolTip="{Binding Album.Title}">
+                                        <TextBlock.InputBindings>
+                                            <MouseBinding
+                                                Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                CommandParameter="{Binding Album}"
+                                                Gesture="LeftClick" />
+                                        </TextBlock.InputBindings>
+                                    </TextBlock>
 
-                                <TextBlock
-                                    Grid.Column="3"
-                                    Margin="8,0,8,0"
-                                    VerticalAlignment="Center"
-                                    Cursor="Hand"
-                                    FontSize="13"
-                                    Style="{StaticResource ClickableTextBlockStyle}"
-                                    Text="{Binding Album.Title}"
-                                    ToolTip="{Binding Album.Title}">
-                                    <TextBlock.InputBindings>
-                                        <MouseBinding
-                                            Command="{Binding MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                            CommandParameter="{Binding Album}"
-                                            Gesture="LeftClick" />
-                                    </TextBlock.InputBindings>
-                                </TextBlock>
-
-                                <TextBlock
-                                    Grid.Column="4"
-                                    Margin="8,0,8,0"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    FontSize="13"
-                                    Text="{Binding Album.Year}" />
-
-                                <TextBlock
-                                    Grid.Column="5"
-                                    Margin="8,0,0,0"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    FontSize="13"
-                                    Text="{Binding Duration, StringFormat='{}{0:hh\\:mm\\:ss}'}" />
-                            </Grid>
+                                    <TextBlock
+                                        Grid.Column="4"
+                                        Margin="8,0,0,0"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        FontSize="13"
+                                        Foreground="Gray"
+                                        Text="{Binding Duration, StringFormat='{}{0:mm\\:ss}'}" />
+                                </Grid>
+                                <Border.InputBindings>
+                                    <MouseBinding
+                                        Command="{Binding MainViewModel.Player.OpenAndPlayCommand, ElementName=ThisPage}"
+                                        Gesture="LeftClick">
+                                        <MouseBinding.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource UselessButNeededConverter}">
+                                                <Binding Path="" />
+                                                <Binding
+                                                    ElementName="ThisPage"
+                                                    Path="DataContext.Tracks" />
+                                            </MultiBinding>
+                                        </MouseBinding.CommandParameter>
+                                    </MouseBinding>
+                                </Border.InputBindings>
+                            </Border>
                         </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </StackPanel>
         </ScrollViewer>
     </Grid>

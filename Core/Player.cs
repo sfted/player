@@ -4,7 +4,6 @@ using Player.Core.Utils.MVVM;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Timers;
 using System.Windows.Media;
 
@@ -102,6 +101,12 @@ namespace Player.Core
                                 PlayNewTrack(track1, iPlayable);
                             else if (parameters[1] is List<Track> tracks)
                                 PlayNewTrack(track1, tracks);
+                            else if (parameters[1] is ObservableCollection<Track> queue)
+                            {
+                                CurrentTrackIndexInQueue = PlaybackQueue.IndexOf(track1);
+                                OpenTrack(track1);
+                                PlayPause(true);
+                            }
                         }
                     }
                 }
