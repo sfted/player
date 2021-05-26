@@ -2,7 +2,6 @@
 using Player.Core;
 using Player.Core.Utils;
 using Player.Core.Utils.MVVM;
-using Serilog;
 using System;
 using System.Windows;
 

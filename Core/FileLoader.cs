@@ -1,7 +1,6 @@
 ﻿using Player.Core.Entities;
 using Player.Core.Utils;
 using Player.Core.Utils.MVVM;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -104,7 +103,6 @@ namespace Player.Core
                 database.Dispose();
                 Settings.IsMusicLoaded = true;
                 Settings.Save();
-                Log.Information("Скан библиотеки завершен.");
                 LoadingCompleted();
             };
 
@@ -123,12 +121,9 @@ namespace Player.Core
             int progress = 0;
             int goal = files.Length;
 
-            Log.Information("Первичный скан библиотеки завершен. Найдено {Count} файлов.", files.Length);
             foreach (string format in SUPPORTED_FORMATS)
             {
                 var filteredFiles = files.Where(s => s.Contains(format));
-                Log.Information("Найдено {Count} файлов в формате '{Format}'. Начинаю сканирование и загрузку этих файлов в БД.",
-                    filteredFiles.Count(), format);
 
                 foreach (string file in filteredFiles)
                 {
@@ -149,12 +144,10 @@ namespace Player.Core
             }
             catch (UnsupportedFormatException)
             {
-                Log.Error("Формат файла '{FileName}' не поддерживается. Пропускаю...", Path.GetFileName(fileName));
                 return;
             }
             catch (TagLib.CorruptFileException)
             {
-                Log.Error("Файл '{FileName}' поврежден. Пропускаю...", Path.GetFileName(fileName));
                 return;
             }
 

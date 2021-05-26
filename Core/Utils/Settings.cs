@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json.Linq;
-using Serilog;
 using System;
 using System.IO;
 
@@ -39,26 +38,21 @@ namespace Player.Core.Utils
         }
 
         public static void Save()
-        {
-            Log.Information("Сохранение настроек...");
+        { 
             File.WriteAllText(path, JObject.FromObject(settings).ToString());
         }
 
         public static void Load(string settings_uri)
         {
             path = settings_uri;
-            Log.Information("Поиск файла настроек по пути '{Path}'", path);
             if (!File.Exists(path))
             {
-                Log.Warning("Файл настроек не найден. Загружаю дефолтные настройки...");
                 settings = new SettingsProvider(true);
             }
             else
             {
-                Log.Information("Файл настроек найден. Загружаю...");
                 settings = JObject.Parse(File.ReadAllText(path)).ToObject<SettingsProvider>();
             }
-            Log.Debug("Текущие настройки: {@Settings}", settings);
         }
     }
 }
