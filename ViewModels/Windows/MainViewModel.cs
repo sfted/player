@@ -36,6 +36,7 @@ namespace Player.ViewModels.Windows
         {
             get => openEntityCommand ??= new RelayCommand(obj =>
             {
+                bool navigated = false;
                 Page page;
                 if (obj is Album album)
                 {
@@ -53,10 +54,16 @@ namespace Player.ViewModels.Windows
                 else if (obj is Core.Player player)
                 {
                     page = new QueueViewPage(this) { DataContext = player };
+                    if (Navigation.CurrentPage.DataContext == page.DataContext)
+                        Navigation.NavigateBack();
+                    else
+                        Navigation.NavigateTo(page);
+
+                    navigated = true;
                 }
                 else return;
 
-                if(Navigation.CurrentPage.DataContext != page.DataContext)
+                if(Navigation.CurrentPage.DataContext != page.DataContext && !navigated)
                     Navigation.NavigateTo(page);
             });
         }

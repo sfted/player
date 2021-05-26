@@ -56,4 +56,30 @@ namespace Player.Core.Utils
             throw new NotSupportedException();
         }
     }
+
+    [ValueConversion(typeof(Player.PlaybackModes), typeof(Geometry))]
+    public class PlaybackModesToIconsConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            switch ((Player.PlaybackModes)value)
+            {
+                case Player.PlaybackModes.Default:
+                    return Application.Current.Resources["icon-playback-default"];
+                case Player.PlaybackModes.RepeatAll:
+                    return Application.Current.Resources["icon-repeat-all"];
+                case Player.PlaybackModes.RepeatOne:
+                    return Application.Current.Resources["icon-repeat-once"];
+                case Player.PlaybackModes.Shuffle:
+                    return Application.Current.Resources["icon-shuffle"];
+                default:
+                    return Application.Current.Resources["icon-playback-default"];
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
 }

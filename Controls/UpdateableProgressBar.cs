@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -20,7 +19,7 @@ namespace Player.Controls
         {
             RealValueProperty = DependencyProperty.Register
             (
-                nameof(RealValue),
+                "RealValue",
                 typeof(double),
                 typeof(UpdateableProgressBar),
                 new FrameworkPropertyMetadata
@@ -72,7 +71,7 @@ namespace Player.Controls
 
         private void OnRealValuePropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
         {
-            if(!isMouseMoving)
+            if (!isMouseMoving)
                 Value = (double)e.NewValue;
         }
     }

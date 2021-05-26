@@ -4,6 +4,7 @@ using Player.Core.Utils.MVVM;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Timers;
 using System.Windows.Media;
 
@@ -14,6 +15,7 @@ namespace Player.Core
         private readonly MediaPlayer player = new MediaPlayer();
         private readonly Timer timer = new Timer();
 
+        private List<int> unshuffledQueueOrderIds;
         public ObservableCollection<Track> PlaybackQueue { get; private set; }
         public int CurrentTrackIndexInQueue { get; private set; }
 
@@ -59,6 +61,11 @@ namespace Player.Core
             {
                 playbackMode = value;
                 NotifyPropertyChanged(nameof(PlaybackMode));
+
+                if(PlaybackMode == PlaybackModes.Shuffle)
+                    ShuffleQueue();
+                else
+                    UnShuffleQueue();
             }
         }
 
@@ -66,6 +73,12 @@ namespace Player.Core
         {
             get => player.Position.TotalSeconds;
             set => player.Position = TimeSpan.FromSeconds(value);
+        }
+
+        public double Volume
+        {
+            get => player.Volume;
+            set => player.Volume = value;
         }
 
         public TimeSpan Position
@@ -109,9 +122,24 @@ namespace Player.Core
                             }
                         }
                     }
+                    else if (obj is IPlayable collection)
+                    {
+                        PlayNewTrack(collection);
+                    }
                 }
             );
         }
+
+        private RelayCommand cyclePlaybackModeCommand;
+        public RelayCommand CyclePlaybackModeCommand
+        {
+            get => cyclePlaybackModeCommand ??= new RelayCommand
+            (
+                obj => CyclePlaybackMode(),
+                obj => CanIManagePlayback()
+            );
+        }
+
 
         private RelayCommand playPauseCommand;
         public RelayCommand PlayPauseCommand
@@ -145,7 +173,7 @@ namespace Player.Core
 
         public Player()
         {
-            PlaybackMode = PlaybackModes.RepeatAll;
+            PlaybackMode = PlaybackModes.Shuffle;
             IsPlaying = false;
             timer.Interval = 100;
             timer.Elapsed += (s, e) =>
@@ -178,15 +206,30 @@ namespace Player.Core
             PlayPause(true);
         }
 
-        private void PlayNewTrack(Track track, IPlayable trackCollection)
+        private void PlayNewTrack(IPlayable trackCollection)
         {
             PlaybackQueue = new ObservableCollection<Track>();
-
             foreach (var t in trackCollection.Tracks)
                 PlaybackQueue.Add(t);
 
-            CurrentTrackIndexInQueue = PlaybackQueue.IndexOf(track);
+            if (PlaybackMode == PlaybackModes.Shuffle)
+                PlaybackQueue.Shuffle();
 
+            CurrentTrackIndexInQueue = 0;
+            OpenTrack(PlaybackQueue[0]);
+            PlayPause(true);
+        }
+
+        private void PlayNewTrack(Track track, IPlayable trackCollection)
+        {
+            PlaybackQueue = new ObservableCollection<Track>();
+            foreach (var t in trackCollection.Tracks)
+                PlaybackQueue.Add(t);
+
+            if (PlaybackMode == PlaybackModes.Shuffle)
+                PlaybackQueue.Shuffle();
+
+            CurrentTrackIndexInQueue = PlaybackQueue.IndexOf(track);
             OpenTrack(track);
             PlayPause(true);
         }
@@ -194,20 +237,62 @@ namespace Player.Core
         private void PlayNewTrack(Track track, List<Track> tracks)
         {
             PlaybackQueue = new ObservableCollection<Track>();
-
             foreach (var t in tracks)
                 PlaybackQueue.Add(t);
 
-            CurrentTrackIndexInQueue = PlaybackQueue.IndexOf(track);
+            if (PlaybackMode == PlaybackModes.Shuffle)
+                PlaybackQueue.Shuffle();
 
+            CurrentTrackIndexInQueue = PlaybackQueue.IndexOf(track);
             OpenTrack(track);
             PlayPause(true);
+        }
+
+        private void CyclePlaybackMode()
+        {
+            if (PlaybackMode == PlaybackModes.Shuffle)
+                PlaybackMode = PlaybackModes.Default;
+            else
+                PlaybackMode++;
         }
 
         private void OpenTrack(Track track)
         {
             CurrentTrack = track;
             player.Open(new Uri(track.FileName, UriKind.Absolute));
+        }
+
+        private void ShuffleQueue()
+        {
+            if (PlaybackQueue != null)
+            {
+                unshuffledQueueOrderIds = new List<int>();
+                foreach (Track track in PlaybackQueue)
+                    unshuffledQueueOrderIds.Add(track.Id);
+
+                PlaybackQueue.Shuffle();
+            }
+        }
+
+        private void UnShuffleQueue()
+        {
+            if ((unshuffledQueueOrderIds != null) && (PlaybackQueue.Count == unshuffledQueueOrderIds.Count))
+            {
+                // https://ppolyzos.com/2016/01/29/c-sort-one-collection-based-on-another-one/
+                var sorted = unshuffledQueueOrderIds.Join
+                (
+                    PlaybackQueue,
+                    key => key,
+                    t => t.Id,
+                    (key, iitem) => iitem
+                )
+                .ToList();
+
+                for (int i = 0; i < sorted.Count; i++)
+                    PlaybackQueue[i] = sorted[i];
+
+                unshuffledQueueOrderIds = null;
+            }
         }
 
         private void PlayPause(bool playForcibly = false)
@@ -283,6 +368,24 @@ namespace Player.Core
             RepeatAll,
             RepeatOne,
             Shuffle
+        }
+    }
+
+    public static class ListExstentions
+    {
+        private static readonly Random rng = new Random();
+
+        public static void Shuffle<T>(this IList<T> list)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
         }
     }
 }

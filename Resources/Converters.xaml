@@ -4,6 +4,7 @@
     xmlns:utils="clr-namespace:Player.Core.Utils">
 
     <utils:UselessButNeededConverter x:Key="UselessButNeededConverter" />
+    <utils:PlaybackModesToIconsConverter x:Key="PlaybackModesToIconsConverter" />
     <utils:IsPlayingToPlayPauseIconsConverter x:Key="IsPlayingToPlayPauseIconsConverter" />
     <utils:PlayerIsTrackSetVisibilityConverter x:Key="PlayerIsTrackSetVisibilityConverter" />
 </ResourceDictionary>

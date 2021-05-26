@@ -165,6 +165,7 @@
                             <Grid
                                 Margin="8"
                                 VerticalAlignment="Top"
+                                Background="Transparent"
                                 Cursor="Hand">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
@@ -252,6 +253,15 @@
                                         CommandParameter="{Binding}"
                                         Gesture="LeftClick" />
                                 </Grid.InputBindings>
+
+                                <Grid.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem
+                                            Command="{Binding Source={x:Reference ThisPage}, Path=DataContext.MainViewModel.Player.OpenAndPlayCommand}"
+                                            CommandParameter="{Binding}"
+                                            Header="Слушать" />
+                                    </ContextMenu>
+                                </Grid.ContextMenu>
                             </Grid>
                             <DataTemplate.Triggers>
                                 <DataTrigger
@@ -324,6 +334,14 @@
                                         CommandParameter="{Binding}"
                                         Gesture="LeftClick" />
                                 </Border.InputBindings>
+                                <Border.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem
+                                            Command="{Binding Source={x:Reference ThisPage}, Path=DataContext.MainViewModel.Player.OpenAndPlayCommand}"
+                                            CommandParameter="{Binding}"
+                                            Header="Слушать" />
+                                    </ContextMenu>
+                                </Border.ContextMenu>
                             </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -387,6 +405,14 @@
                                                 CommandParameter="{Binding}"
                                                 Gesture="LeftClick" />
                                         </Border.InputBindings>
+                                        <!--<Border.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem
+                                                    Command="{Binding Source={x:Reference ThisPage}, Path=DataContext.MainViewModel.Player.OpenAndPlayCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Header="Слушать" />
+                                            </ContextMenu>
+                                        </Border.ContextMenu>-->
                                     </Border>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>

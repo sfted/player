@@ -16,10 +16,7 @@ namespace Player.ViewModels.Pages
         public Folder RootFolder { get; set; }
 
         public MainViewModel MainViewModel { get; private set; }
-
-
-        private ApplicationContext database = new ApplicationContext();
-
+       
         public MainPageViewModel(MainViewModel mainViewModel)
         {
             MainViewModel = mainViewModel;
@@ -27,36 +24,23 @@ namespace Player.ViewModels.Pages
             {
                 Tracks = db.Tracks.Include(track => track.Artists)
                                   .ToList();
-            
+
                 Artists = db.Artists.Include(artist => artist.Tracks)
                                     .Include(artist => artist.Albums)
                                     .ToList();
-            
+
                 Albums = db.Albums.Include(album => album.Artists)
                                   .Include(album => album.Genres)
                                   .ToList();
-            
-                RootFolder = db.Folders.Find(1);
-            
-                db.Entry(RootFolder).Collection(folder => folder.Folders).Load();
-                db.Entry(RootFolder).Collection(folder => folder.Tracks).Load();
-            }
 
-                //Tracks = database.Tracks.Include(track => track.Artists)
-                //                        .ToList();
-                //
-                //Artists = database.Artists.Include(artist => artist.Tracks)
-                //                          .Include(artist => artist.Albums)
-                //                          .ToList();
-                //
-                //Albums = database.Albums.Include(album => album.Artists)
-                //                        .Include(album => album.Genres)
-                //                        .ToList();
-                //
-                //RootFolder = database.Folders.Find(1);
-                //
-                //database.Entry(RootFolder).Collection(folder => folder.Folders).Load();
-                //database.Entry(RootFolder).Collection(folder => folder.Tracks).Load();
+                try
+                {
+                    RootFolder = db.Folders.Find(1);
+                    db.Entry(RootFolder).Collection(folder => folder.Folders).Load();
+                    db.Entry(RootFolder).Collection(folder => folder.Tracks).Load();
+                }
+                catch { }
+            }
         }
     }
 }
