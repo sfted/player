@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Player.Core.Entities.Interfaces;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using System.Windows.Media.Imaging;
 
 namespace Player.Core.Entities
 {
-    public class Album : BaseEntity
+    public class Album : BaseEntity, IPlayable
     {
         public string Title { get; set; }
         public uint Year { get; set; }

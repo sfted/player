@@ -1,21 +1,54 @@
 ﻿using System;
 using System.Globalization;
+using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 
 namespace Player.Core.Utils
 {
-    [ValueConversion(typeof(System.Drawing.Color), typeof(Brush))]
-    public class DrawingColorToBrushConverter : IValueConverter
+    [ValueConversion(typeof(object[]), typeof(object[]))]
+    public class UselessButNeededConverter : IMultiValueConverter
     {
-        private static Color WHITE = Color.FromRgb(255, 255, 255);
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            return values.Clone();
+        }
 
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    [ValueConversion(typeof(bool), typeof(Geometry))]
+    public class IsPlayingToPlayPauseIconsConverter : IValueConverter
+    {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is System.Drawing.Color color)
-                return new SolidColorBrush(Color.FromArgb(color.A, color.R, color.G, color.B));
+            var isPlaying = (bool)value;
+            if (isPlaying)
+                return Application.Current.Resources["icon-pause"];
             else
-                return new SolidColorBrush(WHITE);
+                return Application.Current.Resources["icon-play"];
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    [ValueConversion(typeof(bool), typeof(Visibility))]
+    public class PlayerIsTrackSetVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if ((bool)value)
+                return Visibility.Visible;
+            else
+                return Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

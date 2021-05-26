@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Player.Core.Entities.Interfaces;
+using System.Collections.Generic;
 
 namespace Player.Core.Entities
 {
-    public class Folder : BaseEntity
+    public class Folder : BaseEntity, IPlayable
     {
         public string Name { get; set; }
         public string RelativePath { get; set; }

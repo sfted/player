@@ -9,6 +9,7 @@ namespace Player.ViewModels.Windows
     public class MainViewModel : Notifier
     {
         public Navigation Navigation { get; private set; }
+        public Core.Player Player { get; private set; }
 
         private RelayCommand navigateToCommand;
         public RelayCommand NavigateToCommand
@@ -49,6 +50,10 @@ namespace Player.ViewModels.Windows
                 {
                     page = new FolderViewPage(this, folder);
                 }
+                else if (obj is Core.Player player)
+                {
+                    page = new QueueViewPage(this) { DataContext = player };
+                }
                 else return;
 
                 if(Navigation.CurrentPage.DataContext != page.DataContext)
@@ -59,6 +64,7 @@ namespace Player.ViewModels.Windows
         public MainViewModel()
         {
             Navigation = new Navigation(new MainPage(this));
+            Player = new Core.Player();
         }
     }
 }

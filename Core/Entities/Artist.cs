@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Player.Core.Entities.Interfaces;
+using System.Collections.Generic;
 
 namespace Player.Core.Entities
 {
-    public class Artist : BaseEntity
+    public class Artist : BaseEntity, IPlayable
     {
         public string Name { get; set; }
         public List<Album> Albums { get; set; } = new List<Album>();
