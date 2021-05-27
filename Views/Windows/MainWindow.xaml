@@ -47,11 +47,6 @@
                 FontSize="24"
                 FontWeight="Light"
                 Text="{Binding Navigation.CurrentPage.Title}" />
-            <!--<Button
-                Margin="4,4,0,4"
-                Padding="8,4"
-                Command="{Binding NavigateToCommand}"
-                Content="На страницу 1" />-->
         </StackPanel>
 
         <Frame
@@ -247,15 +242,6 @@
                     Maximum="1"
                     Minimum="0"
                     Value="{Binding Player.Volume}" />
-
-                <!--<controls:UpdateableProgressBar
-                    Width="60"
-                    Height="8"
-                    Margin="0,0,8,0"
-                    BorderThickness="0"
-                    Foreground="DodgerBlue"
-                    Maximum="{Binding Player.CurrentTrack.DurationInSeconds}"
-                    RealValue="{Binding Player.PositionInSeconds}" />-->
             </StackPanel>
         </Grid>
     </Grid>

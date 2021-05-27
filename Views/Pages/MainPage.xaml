@@ -405,14 +405,6 @@
                                                 CommandParameter="{Binding}"
                                                 Gesture="LeftClick" />
                                         </Border.InputBindings>
-                                        <!--<Border.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem
-                                                    Command="{Binding Source={x:Reference ThisPage}, Path=DataContext.MainViewModel.Player.OpenAndPlayCommand}"
-                                                    CommandParameter="{Binding}"
-                                                    Header="Слушать" />
-                                            </ContextMenu>
-                                        </Border.ContextMenu>-->
                                     </Border>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>

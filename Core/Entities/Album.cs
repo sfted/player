@@ -12,7 +12,6 @@ namespace Player.Core.Entities
         public uint Year { get; set; }
         public uint TrackCount { get; set; }
         public uint DiscCount { get; set; }
-        //public string AlbumArtUri { get; set; }
 
         public int? AlbumArtId { get; set; }
         public virtual AlbumArt Art { get; set; }

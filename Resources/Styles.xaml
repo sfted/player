@@ -106,7 +106,7 @@
                 <Setter Property="Background" Value="LightGray" />
             </Trigger>
             <Trigger Property="Button.IsPressed" Value="True">
-                <Setter Property="Background" Value="Gray" />
+                <Setter Property="Background" Value="DarkGray" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
                 <Setter Property="Opacity" Value="0.5" />
