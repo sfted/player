@@ -1,5 +1,4 @@
 ﻿using Player.Core.Entities;
-using Player.Core.Utils;
 using Player.Core.Utils.MVVM;
 using System;
 using System.Collections.Generic;
@@ -20,7 +19,7 @@ namespace Player.Core
             "mp3"
         };
 
-        private readonly ApplicationContext database = new ApplicationContext();
+        private ApplicationContext database;
         private List<Album> albums { get; set; } = new List<Album>();
         private List<Artist> artists { get; set; } = new List<Artist>();
         private List<Genre> genres { get; set; } = new List<Genre>();
@@ -87,12 +86,6 @@ namespace Player.Core
 
         public FileLoader(string pathToLibrary)
         {
-            rootFolder.Name = pathToLibrary.Split('\\').Last();
-            rootFolder.RelativePath = pathToLibrary.Remove(pathToLibrary.IndexOf(rootFolder.Name), rootFolder.Name.Length);
-            rootFolder.RelativePath = rootFolder.RelativePath.Remove(rootFolder.RelativePath.Length - 1, 1);
-            folders.Add(rootFolder);
-            database.Folders.Add(rootFolder);
-
             worker.WorkerReportsProgress = true;
             worker.DoWork += (object sender, DoWorkEventArgs e) => LoadFiles(pathToLibrary);
             worker.ProgressChanged += (object sender, ProgressChangedEventArgs e) => ProgressPercentage = e.ProgressPercentage;
@@ -115,21 +108,34 @@ namespace Player.Core
         {
             IsRunning = true;
             string[] files = Directory.GetFiles(pathToLibrary, "*.*", SearchOption.AllDirectories);
-            int progress = 0;
-            int goal = files.Length;
 
+            var neededFiles = new List<string>();
             foreach (string format in SUPPORTED_FORMATS)
-            {
-                var filteredFiles = files.Where(s => s.Contains(format));
+                neededFiles.AddRange(files.Where(s => s.Contains(format)));
 
-                foreach (string file in filteredFiles)
-                {
-                    LoadNewFile(file, pathToLibrary);
-                    progress++;
-                    int percent = Convert.ToInt32((double)progress / (double)goal * 100);
-                    worker.ReportProgress(percent);
-                }
+            int progress = 0;
+            int goal = neededFiles.Count;
+
+            database = new ApplicationContext();
+            InitializeRootDirectory(pathToLibrary);
+
+            foreach (string file in neededFiles)
+            {
+                LoadNewFile(file, pathToLibrary);
+                progress++;
+                int percent = Convert.ToInt32((double)progress / (double)goal * 100);
+                worker.ReportProgress(percent);
             }
+        }
+
+        // будет переработано в будущем для поддержки нескольких корневых каталогов 
+        private void InitializeRootDirectory(string pathToLibrary)
+        {
+            rootFolder.Name = pathToLibrary.Split('\\').Last();
+            rootFolder.RelativePath = pathToLibrary.Remove(pathToLibrary.IndexOf(rootFolder.Name), rootFolder.Name.Length);
+            rootFolder.RelativePath = rootFolder.RelativePath.Remove(rootFolder.RelativePath.Length - 1, 1);
+            folders.Add(rootFolder);
+            database.Folders.Add(rootFolder);
         }
 
         private void LoadNewFile(string fileName, string pathToLibrary)
