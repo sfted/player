@@ -1,6 +1,4 @@
-﻿using Player.Core.Utils;
-using Player.ViewModels.Windows;
-using Player.Views.Windows;
+﻿using Player.ViewModels.Windows;
 using System.Windows;
 
 namespace Player
@@ -17,20 +15,6 @@ namespace Player
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (!Settings.IsMusicLoaded)
-            {
-                Hide();
-                var viewModel = new FirstStartupViewModel();
-                var window = new FirstStartupWindow { Owner = this };
-                viewModel.FinishedInitialSetup += () =>
-                {
-                    Show();
-                    window.Close();
-                };
-                window.DataContext = viewModel;
-                window.Show();
-            }
-
             DataContext = new MainViewModel();
         }
     }

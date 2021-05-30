@@ -100,9 +100,6 @@ namespace Player.Core
             {
                 ProgressPercentage = 100;
                 database.SaveChanges();
-                database.Dispose();
-                Settings.IsMusicLoaded = true;
-                Settings.Save();
                 LoadingCompleted();
             };
 

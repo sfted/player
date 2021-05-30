@@ -9,6 +9,8 @@ namespace Player.Core.Utils
     {
         private readonly List<Page> Journal = new();
 
+        public bool IsNavigationAllowed { get; set; } = true;
+
         private Page currentPage;
         public Page CurrentPage
         {
@@ -18,12 +20,6 @@ namespace Player.Core.Utils
                 currentPage = value;
                 NotifyPropertyChanged(nameof(CurrentPage));
             }
-        }
-
-        public Navigation(Page startPage)
-        {
-            CurrentPage = startPage;
-            Journal.Add(startPage);
         }
 
         public void NavigateTo(Page page)
@@ -46,7 +42,12 @@ namespace Player.Core.Utils
 
         public bool CanNavigateBack()
         {
-            return Journal.Count > 1;
+            return Journal.Count > 1 && IsNavigationAllowed;
+        }
+
+        public void ClearJournal()
+        {
+            Journal.Clear();
         }
     }
 }

@@ -63,7 +63,7 @@ namespace Player.Core
                 playbackMode = value;
                 NotifyPropertyChanged(nameof(PlaybackMode));
 
-                if(PlaybackMode == PlaybackModes.Shuffle)
+                if (PlaybackMode == PlaybackModes.Shuffle)
                     ShuffleQueue();
                 else
                     UnShuffleQueue();

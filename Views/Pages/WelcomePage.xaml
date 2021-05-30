@@ -13,7 +13,10 @@
     Background="White"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid
+        MaxWidth="600"
+        MaxHeight="300"
+        Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -38,7 +41,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Bottom"
                 FontSize="16"
-                Text="Выбери корневой каталог своей музыкальной библиотеки, чтобы я мог загрузить её в БД"
+                Text="Привет! Прежде чем я смогу проигрывать музыку, тебе нужно выбрать корневой каталог своей музыкальной библиотеки, чтобы я мог загрузить её в БД."
                 TextAlignment="Center"
                 TextWrapping="Wrap" />
             <TextBox

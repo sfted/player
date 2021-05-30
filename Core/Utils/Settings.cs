@@ -9,7 +9,7 @@ namespace Player.Core.Utils
         private static string path;
         private static SettingsProvider settings;
 
-        public static bool IsMusicLoaded
+        public static bool MusicIsLoaded
         {
             get { return settings.FilesAreLoaded; }
             set { settings.FilesAreLoaded = value; }

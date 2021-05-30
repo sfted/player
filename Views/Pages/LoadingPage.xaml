@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:Player.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pages="clr-namespace:Player.ViewModels.Pages"
-    Title="{Binding Loader.ProgressPercentage, StringFormat='{}Загрузка {0}%'}"
+    Title="Загрузка медиатеки в БД"
     d:DataContext="{d:DesignInstance Type=pages:LoadingPageViewModel}"
     d:DesignHeight="350"
     d:DesignWidth="500"
@@ -14,7 +14,10 @@
     Loaded="PageLoaded"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid
+        MaxWidth="600"
+        MaxHeight="300"
+        Margin="16">
         <StackPanel
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center">
@@ -28,6 +31,7 @@
                 Height="6"
                 Margin="0,0,0,8"
                 BorderBrush="#FFE6E6E6"
+                Foreground="DodgerBlue"
                 Value="{Binding Loader.ProgressPercentage}" />
             <TextBlock
                 Margin="0,0,0,8"
