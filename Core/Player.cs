@@ -16,9 +16,7 @@ namespace Player.Core
         private readonly MediaPlayer player = new MediaPlayer();
         private readonly Timer timer = new Timer();
 
-        private List<int> unshuffledQueueOrderIds;
-        public ObservableCollection<Track> PlaybackQueue { get; private set; }
-        public int CurrentTrackIndexInQueue { get; private set; }
+        public PlaybackQueue Queue { get; private set; }
 
         private Track currentTrack;
         public Track CurrentTrack
@@ -51,22 +49,6 @@ namespace Player.Core
             {
                 isPlaying = value;
                 NotifyPropertyChanged(nameof(IsPlaying));
-            }
-        }
-
-        private PlaybackModes playbackMode;
-        public PlaybackModes PlaybackMode
-        {
-            get => playbackMode;
-            set
-            {
-                playbackMode = value;
-                NotifyPropertyChanged(nameof(PlaybackMode));
-
-                if (PlaybackMode == PlaybackModes.Shuffle)
-                    ShuffleQueue();
-                else
-                    UnShuffleQueue();
             }
         }
 
@@ -115,12 +97,12 @@ namespace Player.Core
                                 PlayNewTrack(track1, iPlayable);
                             else if (parameters[1] is List<Track> tracks)
                                 PlayNewTrack(track1, tracks);
-                            else if (parameters[1] is ObservableCollection<Track> queue)
-                            {
-                                CurrentTrackIndexInQueue = PlaybackQueue.IndexOf(track1);
-                                OpenTrack(track1);
-                                PlayPause(true);
-                            }
+                            //else if (parameters[1] is ObservableCollection<Track> queue)
+                            //{
+                            //    CurrentTrackIndexInQueue = PlaybackQueue.IndexOf(track1);
+                            //    OpenTrack(track1);
+                            //    PlayPause(true);
+                            //}
                         }
                     }
                     else if (obj is IPlayable collection)
@@ -131,16 +113,15 @@ namespace Player.Core
             );
         }
 
-        private RelayCommand cyclePlaybackModeCommand;
-        public RelayCommand CyclePlaybackModeCommand
-        {
-            get => cyclePlaybackModeCommand ??= new RelayCommand
-            (
-                obj => CyclePlaybackMode(),
-                obj => CanIManagePlayback()
-            );
-        }
-
+        //private RelayCommand cyclePlaybackModeCommand;
+        //public RelayCommand CyclePlaybackModeCommand
+        //{
+        //    get => cyclePlaybackModeCommand ??= new RelayCommand
+        //    (
+        //        obj => CyclePlaybackMode(),
+        //        obj => CanManagePlayback()
+        //    );
+        //}
 
         private RelayCommand playPauseCommand;
         public RelayCommand PlayPauseCommand
@@ -148,7 +129,7 @@ namespace Player.Core
             get => playPauseCommand ??= new RelayCommand
             (
                 obj => PlayPause(),
-                obj => CanIManagePlayback()
+                obj => CanManagePlayback()
             );
         }
 
@@ -158,7 +139,7 @@ namespace Player.Core
             get => skipToNextCommand ??= new RelayCommand
             (
                 obj => SkipToNext(),
-                obj => CanIManagePlayback() && CanIGoToNext()
+                obj => CanManagePlayback() && Queue.CanSkipToNextTrack()
             );
         }
 
@@ -168,13 +149,12 @@ namespace Player.Core
             get => skipToPreviousCommand ??= new RelayCommand
             (
                 obj => SkipToPrevious(),
-                obj => CanIManagePlayback() && CanIGoToPrevious()
+                obj => CanManagePlayback()
             );
         }
 
         public Player()
         {
-            PlaybackMode = PlaybackModes.Shuffle;
             IsPlaying = false;
             timer.Interval = 100;
             timer.Elapsed += (s, e) =>
@@ -185,115 +165,72 @@ namespace Player.Core
 
             player.MediaEnded += (s, e) =>
             {
-                if (PlaybackMode == PlaybackModes.RepeatOne)
-                    SkipToNext(stayOnCurrentTrack: true);
-                else if (CanIGoToNext())
+                if (Queue.CanSkipToNextTrack())
                     SkipToNext();
             };
 
             player.MediaFailed += (s, e) =>
             {
-                if (CanIGoToNext())
+                if (Queue.CanSkipToNextTrack())
                     SkipToNext();
             };
         }
 
         private void PlayNewTrack(Track track)
         {
-            PlaybackQueue = new ObservableCollection<Track>();
-            PlaybackQueue.Add(track);
-            CurrentTrackIndexInQueue = 0;
+            Queue = new PlaybackQueue(track);
             OpenTrack(track);
             PlayPause(true);
         }
 
         private void PlayNewTrack(IPlayable trackCollection)
         {
-            PlaybackQueue = new ObservableCollection<Track>();
+            var collection = new ObservableCollection<Track>();
             foreach (var t in trackCollection.Tracks)
-                PlaybackQueue.Add(t);
+                collection.Add(t);
 
-            if (PlaybackMode == PlaybackModes.Shuffle)
-                ShuffleQueue();
+            Queue = new PlaybackQueue(collection);
 
-            CurrentTrackIndexInQueue = 0;
-            OpenTrack(PlaybackQueue[0]);
+            OpenTrack(Queue[0]);
             PlayPause(true);
         }
 
         private void PlayNewTrack(Track track, IPlayable trackCollection)
         {
-            PlaybackQueue = new ObservableCollection<Track>();
+            var collection = new ObservableCollection<Track>();
             foreach (var t in trackCollection.Tracks)
-                PlaybackQueue.Add(t);
+                collection.Add(t);
 
-            if (PlaybackMode == PlaybackModes.Shuffle)
-                ShuffleQueue();
+            Queue = new PlaybackQueue(track, collection);
 
-            CurrentTrackIndexInQueue = PlaybackQueue.IndexOf(track);
             OpenTrack(track);
             PlayPause(true);
         }
 
         private void PlayNewTrack(Track track, List<Track> tracks)
         {
-            PlaybackQueue = new ObservableCollection<Track>();
+            var collection = new ObservableCollection<Track>();
             foreach (var t in tracks)
-                PlaybackQueue.Add(t);
+                collection.Add(t);
 
-            if (PlaybackMode == PlaybackModes.Shuffle)
-                ShuffleQueue();
+            Queue = new PlaybackQueue(track, collection);
 
-            CurrentTrackIndexInQueue = PlaybackQueue.IndexOf(track);
             OpenTrack(track);
             PlayPause(true);
         }
 
-        private void CyclePlaybackMode()
-        {
-            if (PlaybackMode == PlaybackModes.Shuffle)
-                PlaybackMode = PlaybackModes.Default;
-            else
-                PlaybackMode++;
-        }
+        //private void CyclePlaybackMode()
+        //{
+        //    if (PlaybackMode == PlaybackModes.Shuffle)
+        //        PlaybackMode = PlaybackModes.Default;
+        //    else
+        //        PlaybackMode++;
+        //}
 
         private void OpenTrack(Track track)
         {
             CurrentTrack = track;
             player.Open(new Uri(track.FileName, UriKind.Absolute));
-        }
-
-        private void ShuffleQueue()
-        {
-            if (PlaybackQueue != null)
-            {
-                unshuffledQueueOrderIds = new List<int>();
-                foreach (Track track in PlaybackQueue)
-                    unshuffledQueueOrderIds.Add(track.Id);
-
-                PlaybackQueue.Shuffle();
-            }
-        }
-
-        private void UnShuffleQueue()
-        {
-            if ((unshuffledQueueOrderIds != null) && (PlaybackQueue.Count == unshuffledQueueOrderIds.Count))
-            {
-                // https://ppolyzos.com/2016/01/29/c-sort-one-collection-based-on-another-one/
-                var sorted = unshuffledQueueOrderIds.Join
-                (
-                    PlaybackQueue,
-                    key => key,
-                    t => t.Id,
-                    (key, iitem) => iitem
-                )
-                .ToList();
-
-                for (int i = 0; i < sorted.Count; i++)
-                    PlaybackQueue[i] = sorted[i];
-
-                unshuffledQueueOrderIds = null;
-            }
         }
 
         private void PlayPause(bool playForcibly = false)
@@ -321,46 +258,21 @@ namespace Player.Core
             }
         }
 
-        private void SkipToNext(bool stayOnCurrentTrack = false)
+        private void SkipToNext()
         {
-            if (!stayOnCurrentTrack)
-            {
-                if (CurrentTrackIndexInQueue < PlaybackQueue.Count - 1)
-                    CurrentTrackIndexInQueue++;
-                else
-                    CurrentTrackIndexInQueue = 0;
-
-                OpenTrack(PlaybackQueue[CurrentTrackIndexInQueue]);
-            }
-            else
-                player.Position = TimeSpan.FromSeconds(0);
-
+            OpenTrack(Queue.GetNextTrack());
             PlayPause(true);
         }
 
         private void SkipToPrevious()
         {
-            CurrentTrackIndexInQueue--;
-            OpenTrack(PlaybackQueue[CurrentTrackIndexInQueue]);
+            OpenTrack(Queue.GetPreviousTrack());
             PlayPause(true);
         }
 
-        private bool CanIManagePlayback()
+        private bool CanManagePlayback()
         {
             return CurrentTrack != null;
-        }
-
-        private bool CanIGoToPrevious()
-        {
-            return CurrentTrackIndexInQueue > 0;
-        }
-
-        private bool CanIGoToNext()
-        {
-            if (PlaybackMode == PlaybackModes.RepeatAll)
-                return true;
-            else
-                return CurrentTrackIndexInQueue < PlaybackQueue.Count - 1;
         }
 
         public enum PlaybackModes
