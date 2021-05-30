@@ -8,7 +8,7 @@ namespace Player.Controls
 
     public class UpdateableProgressBar : ProgressBar
     {
-        public static DependencyProperty RealValueProperty = 
+        public static readonly DependencyProperty RealValueProperty =
             DependencyProperty.Register(
                 nameof(RealValue),
                 typeof(double),
@@ -16,37 +16,19 @@ namespace Player.Controls
                 new FrameworkPropertyMetadata
                 (
                     0.0,
-                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                    OnRealValueChangedCallBack
                 )
             );
 
         public double RealValue
         {
             get { return (double)GetValue(RealValueProperty); }
-            set
-            { 
-                SetValue(RealValueProperty, value);
-
-                if (!isMouseMoving)
-                    Value = value;
-            }
+            set { SetValue(RealValueProperty, value); }
         }
 
         public UpdateableProgressBar() : base()
         {
-            //RealValueProperty = DependencyProperty.Register
-            //(
-            //    "RealValue",
-            //    typeof(double),
-            //    typeof(UpdateableProgressBar),
-            //    new FrameworkPropertyMetadata
-            //    (
-            //        0.0,
-            //        FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-            //        OnRealValuePropertyChanged
-            //    )
-            //);
-
             Cursor = Cursors.Hand;
 
             MouseDown += MouseDownHandler;
@@ -84,6 +66,20 @@ namespace Player.Controls
             double value = ratio * Maximum;
 
             return value;
+        }
+
+        private static void OnRealValueChangedCallBack(
+            DependencyObject sender,
+            DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is UpdateableProgressBar u)
+                u.OnCustomerChanged(u.RealValue);
+        }
+
+        protected virtual void OnCustomerChanged(double value)
+        {
+            if (!isMouseMoving)
+                Value = value;
         }
     }
 }
