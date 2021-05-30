@@ -11,6 +11,7 @@
     d:DataContext="{d:DesignInstance Type=core:Player}"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    Style="{StaticResource AnimatedPageStyle}"
     mc:Ignorable="d">
 
     <Grid>

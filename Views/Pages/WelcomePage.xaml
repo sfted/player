@@ -11,6 +11,7 @@
     d:DesignHeight="350"
     d:DesignWidth="500"
     Background="White"
+    Style="{StaticResource AnimatedPageStyle}"
     mc:Ignorable="d">
 
     <Grid

@@ -12,6 +12,7 @@
     d:DesignWidth="500"
     Background="White"
     Loaded="PageLoaded"
+    Style="{StaticResource AnimatedPageStyle}"
     mc:Ignorable="d">
 
     <Grid
