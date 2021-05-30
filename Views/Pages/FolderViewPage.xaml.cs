@@ -1,6 +1,7 @@
 ﻿using Player.Core;
 using Player.Core.Entities;
 using Player.ViewModels.Windows;
+using System.Linq;
 using System.Windows.Controls;
 
 namespace Player.Views.Pages
@@ -20,17 +21,25 @@ namespace Player.Views.Pages
             using (var db = new ApplicationContext())
             {
                 var trackedFolder = db.Folders.Find(folder.Id);
-                db.Entry(trackedFolder).Collection(f => f.Folders).Load();
-                db.Entry(trackedFolder).Collection(f => f.Tracks).Load();
-                foreach (var track in trackedFolder.Tracks)
-                {
-                    db.Entry(track).Collection(t => t.Artists).Load();
-                    db.Entry(track).Reference(t => t.Album).Load();
-                    db.Entry(track.Album).Collection(a => a.Artists).Load();
-                    db.Entry(track.Album).Collection(a => a.Genres).Load();
-                    foreach(var artist in track.Artists)
-                        db.Entry(artist).Collection(a => a.Albums).Load();
-                }
+
+                var tracks = db.Entry(trackedFolder)
+                    .Collection(a => a.Tracks)
+                    .Query()
+                    .Select(ApplicationContext.TrackFast())
+                    .ToList();
+
+                var folders = db.Entry(trackedFolder)
+                    .Collection(a => a.Folders)
+                    .Query()
+                    .Select(ApplicationContext.FolderFast())
+                    .ToList();
+
+                db.DetachEntity(trackedFolder);
+
+                trackedFolder.Tracks = tracks;
+                trackedFolder.Folders = folders;
+
+                // TODO: сделать сортировку
                 DataContext = trackedFolder;
             }
         }

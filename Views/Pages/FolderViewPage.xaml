@@ -11,6 +11,7 @@
     d:DataContext="{d:DesignInstance Type=entities:Folder}"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    Style="{StaticResource AnimatedPageStyle}"
     mc:Ignorable="d">
     <Grid>
         <ScrollViewer
@@ -140,7 +141,7 @@
                                                     ToolTip="{Binding Name}">
                                                     <TextBlock.InputBindings>
                                                         <MouseBinding
-                                                            Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                            Command="{Binding MainViewModel.OpenEntityCommand, ElementName=ThisPage}"
                                                             CommandParameter="{Binding}"
                                                             Gesture="LeftClick" />
                                                     </TextBlock.InputBindings>
@@ -160,7 +161,7 @@
                                         ToolTip="{Binding Album.Title}">
                                         <TextBlock.InputBindings>
                                             <MouseBinding
-                                                Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                Command="{Binding MainViewModel.OpenEntityCommand, ElementName=ThisPage}"
                                                 CommandParameter="{Binding Album}"
                                                 Gesture="LeftClick" />
                                         </TextBlock.InputBindings>

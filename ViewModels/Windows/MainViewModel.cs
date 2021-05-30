@@ -42,12 +42,11 @@ namespace Player.ViewModels.Windows
                 Page page;
                 if (obj is Album album)
                 {
-                    album.Tracks.Sort((t1, t2) => t1.Number.CompareTo(t2.Number));
-                    page = new AlbumViewPage(this) { DataContext = album };
+                    page = new AlbumViewPage(this, album);
                 }
                 else if (obj is Artist artist)
                 {
-                    page = new ArtistViewPage(this) { DataContext = artist };
+                    page = new ArtistViewPage(this, artist);
                 }
                 else if (obj is Folder folder)
                 {

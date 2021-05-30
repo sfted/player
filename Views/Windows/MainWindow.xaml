@@ -49,8 +49,16 @@
                 Text="{Binding Navigation.CurrentPage.Title}" />
         </StackPanel>
 
+        <!--<TextBlock
+            Grid.Row="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Panel.ZIndex="1"
+            Text="Загрузка..." />-->
+
         <Frame
             Grid.Row="2"
+            Panel.ZIndex="2"
             Content="{Binding Navigation.CurrentPage}"
             NavigationUIVisibility="Hidden" />
 

@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Player.Core;
+﻿using Player.Core;
 using Player.Core.Entities;
 using Player.Core.Utils.MVVM;
 using Player.ViewModels.Windows;
@@ -16,31 +15,48 @@ namespace Player.ViewModels.Pages
         public Folder RootFolder { get; set; }
 
         public MainViewModel MainViewModel { get; private set; }
-       
+
         public MainPageViewModel(MainViewModel mainViewModel)
         {
             MainViewModel = mainViewModel;
             using (var db = new ApplicationContext())
             {
-                Tracks = db.Tracks.Include(track => track.Artists)
-                                  .ToList();
+                Tracks = db.LoadTracksFast();
+                Albums = db.LoadAlbumsFast();
+                Artists = db.LoadArtistsFast();
 
-                Artists = db.Artists.Include(artist => artist.Tracks)
-                                    .Include(artist => artist.Albums)
-                                    .ToList();
-
-                Albums = db.Albums.Include(album => album.Artists)
-                                  .Include(album => album.Genres)
-                                  .ToList();
-
+                // TODO: доработать
+                // (не помню зачем тут трай-кетч)
                 try
                 {
-                    RootFolder = db.Folders.Find(1);
-                    db.Entry(RootFolder).Collection(folder => folder.Folders).Load();
-                    db.Entry(RootFolder).Collection(folder => folder.Tracks).Load();
+                    RootFolder = LoadRootFolder(db);
                 }
                 catch { }
             }
+        }
+
+        private Folder LoadRootFolder(ApplicationContext db)
+        {
+            var rootFolder = db.Folders.Find(1);
+
+            var tracks = db.Entry(rootFolder)
+                .Collection(a => a.Tracks)
+                .Query()
+                .Select(ApplicationContext.TrackFast())
+                .ToList();
+
+            var folders = db.Entry(rootFolder)
+                .Collection(a => a.Folders)
+                .Query()
+                .Select(ApplicationContext.FolderFast())
+                .ToList();
+
+            db.DetachEntity(rootFolder);
+
+            rootFolder.Tracks = tracks;
+            rootFolder.Folders = folders;
+
+            return rootFolder;
         }
     }
 }
