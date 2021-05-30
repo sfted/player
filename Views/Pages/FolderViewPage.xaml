@@ -141,7 +141,7 @@
                                                     ToolTip="{Binding Name}">
                                                     <TextBlock.InputBindings>
                                                         <MouseBinding
-                                                            Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                            Command="{Binding MainViewModel.OpenEntityCommand, ElementName=ThisPage}"
                                                             CommandParameter="{Binding}"
                                                             Gesture="LeftClick" />
                                                     </TextBlock.InputBindings>
@@ -161,7 +161,7 @@
                                         ToolTip="{Binding Album.Title}">
                                         <TextBlock.InputBindings>
                                             <MouseBinding
-                                                Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                Command="{Binding MainViewModel.OpenEntityCommand, ElementName=ThisPage}"
                                                 CommandParameter="{Binding Album}"
                                                 Gesture="LeftClick" />
                                         </TextBlock.InputBindings>

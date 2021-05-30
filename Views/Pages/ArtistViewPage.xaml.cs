@@ -1,18 +1,11 @@
-﻿using Player.ViewModels.Windows;
+﻿using Microsoft.EntityFrameworkCore;
+using Player.Core;
+using Player.Core.Entities;
+using Player.ViewModels.Windows;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+using System.Linq.Expressions;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Player.Views.Pages
 {
@@ -23,10 +16,35 @@ namespace Player.Views.Pages
     {
         public MainViewModel MainViewModel { get; private set; }
 
-        public ArtistViewPage(MainViewModel mainViewModel)
+        public ArtistViewPage(MainViewModel mainViewModel, Artist artist)
         {
             InitializeComponent();
             MainViewModel = mainViewModel;
+
+            using (var db = new ApplicationContext())
+            {
+                var trackedArtist = db.Artists.Find(artist.Id);
+
+                var tracks = db.Entry(trackedArtist)
+                    .Collection(a => a.Tracks)
+                    .Query()
+                    .Select(ApplicationContext.TrackFast())
+                    .ToList();
+
+                var albums = db.Entry(trackedArtist)
+                    .Collection(a => a.Albums)
+                    .Query()
+                    .Select(ApplicationContext.AlbumFast())
+                    .ToList();
+
+                db.DetachEntity(trackedArtist);
+
+                trackedArtist.Tracks = tracks;
+                trackedArtist.Albums = albums;
+
+                // TODO: сделать сортировку
+                DataContext = trackedArtist;
+            }
         }
     }
 }

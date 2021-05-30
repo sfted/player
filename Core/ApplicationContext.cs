@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Player.Core.Entities;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Player.Core
 {
@@ -33,6 +36,101 @@ namespace Player.Core
              */
 
             return Arts.AsNoTracking().First(a => a.Id == id).Data;
+        }
+
+        public void DetachEntity(BaseEntity entity)
+        {
+            Entry(entity).State = EntityState.Detached;
+        }
+
+        public List<Track> LoadTracksFast()
+        {
+            return Tracks.Select(TrackFast())
+            .AsNoTracking()
+            .ToList();
+        }
+
+        public List<Album> LoadAlbumsFast()
+        {
+            return Albums.Select(AlbumFast())
+            .AsNoTracking()
+            .ToList();
+        }
+
+        public List<Artist> LoadArtistsFast()
+        {
+            return Artists.Select(ArtistFast())
+            .AsNoTracking()
+            .ToList();
+        }
+
+        public static Expression<Func<Track, Track>> TrackFast()
+        {
+            return track => new Track
+            {
+                Id = track.Id,
+                Title = track.Title,
+                FileName = track.FileName,
+                Duration = track.Duration,
+                Number = track.Number,
+
+                Artists = track.Artists.Select(artist => new Artist
+                {
+                    Id = artist.Id,
+                    Name = artist.Name
+                }).ToList(),
+
+                Album = new Album
+                {
+                    Id = track.Album.Id,
+                    Title = track.Album.Title,
+                    AlbumArtId = track.Album.AlbumArtId
+                }
+            };
+        }
+
+        public static Expression<Func<Album, Album>> AlbumFast()
+        {
+            return album => new Album
+            {
+                Id = album.Id,
+                Title = album.Title,
+                AlbumArtId = album.AlbumArtId,
+                Year = album.Year,
+
+                Artists = album.Artists.Select(artist => new Artist
+                {
+                    Id = artist.Id,
+                    Name = artist.Name
+                }).ToList()
+            };
+        }
+
+        public static Expression<Func<Artist, Artist>> ArtistFast()
+        {
+            return artist => new Artist
+            {
+                Id = artist.Id,
+                Name = artist.Name
+            };
+        }
+
+        public static Expression<Func<Folder, Folder>> FolderFast()
+        {
+            return folder => new Folder
+            {
+                Id = folder.Id,
+                Name = folder.Name
+            };
+        }
+
+        public static Expression<Func<Genre, Genre>> GenreFast()
+        {
+            return genre => new Genre
+            {
+                Id = genre.Id,
+                Name = genre.Name
+            };
         }
     }
 }
