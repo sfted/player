@@ -8,27 +8,44 @@ namespace Player.Controls
 
     public class UpdateableProgressBar : ProgressBar
     {
-        public static DependencyProperty RealValueProperty;
-        public double RealValue
-        {
-            get { return (double)GetValue(RealValueProperty); }
-            set { SetValue(RealValueProperty, value); }
-        }
-
-        public UpdateableProgressBar() : base()
-        {
-            RealValueProperty = DependencyProperty.Register
-            (
-                "RealValue",
+        public static DependencyProperty RealValueProperty = 
+            DependencyProperty.Register(
+                nameof(RealValue),
                 typeof(double),
                 typeof(UpdateableProgressBar),
                 new FrameworkPropertyMetadata
                 (
                     0.0,
-                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-                    OnRealValuePropertyChanged
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault
                 )
             );
+
+        public double RealValue
+        {
+            get { return (double)GetValue(RealValueProperty); }
+            set
+            { 
+                SetValue(RealValueProperty, value);
+
+                if (!isMouseMoving)
+                    Value = value;
+            }
+        }
+
+        public UpdateableProgressBar() : base()
+        {
+            //RealValueProperty = DependencyProperty.Register
+            //(
+            //    "RealValue",
+            //    typeof(double),
+            //    typeof(UpdateableProgressBar),
+            //    new FrameworkPropertyMetadata
+            //    (
+            //        0.0,
+            //        FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+            //        OnRealValuePropertyChanged
+            //    )
+            //);
 
             Cursor = Cursors.Hand;
 
@@ -67,12 +84,6 @@ namespace Player.Controls
             double value = ratio * Maximum;
 
             return value;
-        }
-
-        private void OnRealValuePropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
-        {
-            if (!isMouseMoving)
-                Value = (double)e.NewValue;
         }
     }
 }
