@@ -76,7 +76,7 @@
                 Grid.Row="0"
                 Grid.Column="0"
                 Grid.ColumnSpan="6"
-                Height="8"
+                Height="12"
                 VerticalAlignment="Center"
                 BorderThickness="0"
                 Foreground="DodgerBlue"
@@ -233,8 +233,9 @@
                         Stretch="Uniform" />
                 </Button>
 
-                <Slider
+                <controls:UpdateableProgressBar
                     Width="100"
+                    Height="12"
                     Margin="0,0,8,0"
                     VerticalAlignment="Center"
                     BorderThickness="0"
