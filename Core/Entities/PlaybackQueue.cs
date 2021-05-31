@@ -4,117 +4,156 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Player.Core.Entities
 {
     public class PlaybackQueue : Notifier
     {
-        private Track nowPlayingTrack;
         private List<int> unshuffledQueueTrackIds;
+        private int nowPlayingTrackIndex;
 
-        public ObservableCollection<Track> Queue { get; private set; }
-        public int NowPlayingTrackIndex { get; private set; }
+        public ObservableCollection<Track> Tracks { get; private set; }
 
-        private bool isShuffleEnabled = false;
-        public bool IsShuffleEnabled
+        public Action<Track> NowPlayingTrackChanged;
+
+        public int OpenedListHashCode { get; private set; }
+
+        private bool shuffleIsEnabled = false;
+        public bool ShuffleIsEnabled
         {
-            get => isShuffleEnabled;
+            get => shuffleIsEnabled;
             set
             {
-                isShuffleEnabled = value;
-                NotifyPropertyChanged(nameof(IsShuffleEnabled));
+                shuffleIsEnabled = value;
+                NotifyPropertyChanged(nameof(ShuffleIsEnabled));
 
-                if (isShuffleEnabled)
+                if (shuffleIsEnabled)
                     Shuffle();
                 else
                     Unshuffle();
             }
         }
 
-        private RepeatMode mode = RepeatMode.NONE;
-        public RepeatMode Mode
+        private Track nowPlayingTrack;
+        public Track NowPlayingTrack
         {
-            get => mode;
+            get => nowPlayingTrack;
+            private set
+            {
+                nowPlayingTrack = value;
+                NotifyPropertyChanged(nameof(NowPlayingTrack));
+
+                if (NowPlayingTrackChanged != null)
+                    NowPlayingTrackChanged(nowPlayingTrack);
+            }
+        }
+
+        private RepeatModes repeatMode = RepeatModes.NONE;
+        public RepeatModes RepeatMode
+        {
+            get => repeatMode;
             set
             {
-                mode = value;
-                NotifyPropertyChanged(nameof(Mode));
+                repeatMode = value;
+                NotifyPropertyChanged(nameof(RepeatMode));
             }
         }
 
-        public PlaybackQueue(Track track)
+        public PlaybackQueue(List<Track> tracks, bool shuffled = false) =>
+            InitializeQueue(tracks[0], tracks, shuffled);
+
+        public PlaybackQueue(Track track, List<Track> tracks, bool shuffled = false) =>
+            InitializeQueue(track, tracks, shuffled);
+
+        private void InitializeQueue(Track track, List<Track> tracks, bool shuffled = false)
         {
-            Queue = new ObservableCollection<Track>();
-            NowPlayingTrackIndex = 0;
-            Queue.Add(track);
-            IsShuffleEnabled = false;
+            Tracks = new ObservableCollection<Track>();
+            foreach (var t in tracks) Tracks.Add(t);
+
+            nowPlayingTrackIndex = tracks.IndexOf(track);
+            NowPlayingTrack = track;
+            ShuffleIsEnabled = shuffled;
+            OpenedListHashCode = tracks.GetHashCode();
         }
 
-        public PlaybackQueue(ObservableCollection<Track> tracks, bool shuffled = false)
-        {
-            Queue = tracks;
-            NowPlayingTrackIndex = 0;
-            IsShuffleEnabled = shuffled;
-        }
+        public void ToggleShuffle() => ShuffleIsEnabled = !ShuffleIsEnabled;
 
-        public PlaybackQueue(Track track, ObservableCollection<Track> tracks, bool shuffled = false)
+        public void SwitchRepeatMode()
         {
-            Queue = tracks;
-            NowPlayingTrackIndex = Queue.IndexOf(track);
-            IsShuffleEnabled = shuffled;
-        }
-
-        public Track GetNextTrack()
-        {
-            switch (Mode)
+            switch (RepeatMode)
             {
-                case RepeatMode.NONE:
-                    NowPlayingTrackIndex++;
+                case RepeatModes.NONE:
+                    RepeatMode = RepeatModes.REPEAT_ALL;
                     break;
-                case RepeatMode.REPEAT_ALL:
-                    if (NowPlayingTrackIndex == Queue.Count - 1)
-                        NowPlayingTrackIndex = 0;
+                case RepeatModes.REPEAT_ALL:
+                    RepeatMode = RepeatModes.REPEAT_ONE;
+                    break;
+                case RepeatModes.REPEAT_ONE:
+                    RepeatMode = RepeatModes.NONE;
+                    break;
+            }
+        }
+
+        public void SkipToTrack(Track track)
+        {
+            nowPlayingTrackIndex = Tracks.IndexOf(track);
+            NowPlayingTrack = track;
+        }
+
+        public void SkipToNextTrack(bool forced = false)
+        {
+            switch (RepeatMode)
+            {
+                case RepeatModes.NONE:
+                    nowPlayingTrackIndex++;
+                    break;
+                case RepeatModes.REPEAT_ALL:
+                    if (nowPlayingTrackIndex == Tracks.Count - 1)
+                        nowPlayingTrackIndex = 0;
                     else
-                        NowPlayingTrackIndex++;
+                        nowPlayingTrackIndex++;
                     break;
-                case RepeatMode.REPEAT_ONE:
+                case RepeatModes.REPEAT_ONE:
+                    if (forced)
+                    {
+                        if (nowPlayingTrackIndex == Tracks.Count - 1)
+                            nowPlayingTrackIndex = 0;
+                        else
+                            nowPlayingTrackIndex++;
+                    }
                     break;
             }
 
-            nowPlayingTrack = Queue[NowPlayingTrackIndex];
-            return nowPlayingTrack;
+            NowPlayingTrack = Tracks[nowPlayingTrackIndex];
         }
 
-        public Track GetPreviousTrack()
+        public void SkipToPreviousTrack()
         {
-            if (Queue.Count > 1)
+            if (Tracks.Count > 1)
             {
-                switch (Mode)
+                switch (RepeatMode)
                 {
-                    case RepeatMode.NONE:
-                        if (NowPlayingTrackIndex != 0)
-                            NowPlayingTrackIndex--;
+                    case RepeatModes.NONE:
+                        if (nowPlayingTrackIndex != 0)
+                            nowPlayingTrackIndex--;
                         break;
-                    case RepeatMode.REPEAT_ALL:
-                        if (NowPlayingTrackIndex == 0)
-                            NowPlayingTrackIndex = Queue.Count - 1;
+                    case RepeatModes.REPEAT_ALL:
+                        if (nowPlayingTrackIndex == 0)
+                            nowPlayingTrackIndex = Tracks.Count - 1;
                         else
-                            NowPlayingTrackIndex--;
+                            nowPlayingTrackIndex--;
                         break;
-                    case RepeatMode.REPEAT_ONE:
+                    case RepeatModes.REPEAT_ONE:
                         break;
                 }
             }
 
-            nowPlayingTrack = Queue[NowPlayingTrackIndex];
-            return nowPlayingTrack;
+            NowPlayingTrack = Tracks[nowPlayingTrackIndex];
         }
 
         public bool CanSkipToNextTrack()
         {
-            if (Mode == RepeatMode.NONE && NowPlayingTrackIndex >= Queue.Count - 1)
+            if (RepeatMode == RepeatModes.NONE && nowPlayingTrackIndex >= Tracks.Count - 1)
                 return false;
             else
                 return true;
@@ -123,23 +162,23 @@ namespace Player.Core.Entities
         public void Shuffle()
         {
             unshuffledQueueTrackIds = new List<int>();
-            foreach (Track track in Queue)
+            foreach (Track track in Tracks)
                 unshuffledQueueTrackIds.Add(track.Id);
 
-            Queue.Shuffle();
-            Queue.Remove(nowPlayingTrack);
-            Queue.Insert(0, nowPlayingTrack);
-            NowPlayingTrackIndex = 0;
+            Tracks.Shuffle();
+            Tracks.Remove(NowPlayingTrack);
+            Tracks.Insert(0, NowPlayingTrack);
+            nowPlayingTrackIndex = 0;
         }
 
         public void Unshuffle()
         {
-            if ((unshuffledQueueTrackIds != null) && (Queue.Count == unshuffledQueueTrackIds.Count))
+            if ((unshuffledQueueTrackIds != null) && (Tracks.Count == unshuffledQueueTrackIds.Count))
             {
                 // https://ppolyzos.com/2016/01/29/c-sort-one-collection-based-on-another-one/
                 var sorted = unshuffledQueueTrackIds.Join
                 (
-                    Queue,
+                    Tracks,
                     key => key,
                     t => t.Id,
                     (key, iitem) => iitem
@@ -147,9 +186,9 @@ namespace Player.Core.Entities
                 .ToList();
 
                 for (int i = 0; i < sorted.Count; i++)
-                    Queue[i] = sorted[i];
+                    Tracks[i] = sorted[i];
 
-                NowPlayingTrackIndex = Queue.IndexOf(nowPlayingTrack);
+                nowPlayingTrackIndex = Tracks.IndexOf(NowPlayingTrack);
 
                 unshuffledQueueTrackIds = null;
             }
@@ -157,10 +196,10 @@ namespace Player.Core.Entities
 
         public Track this[int index]
         {
-            get => Queue[index];
+            get => Tracks[index];
         }
 
-        public enum RepeatMode
+        public enum RepeatModes
         {
             NONE,
             REPEAT_ALL,

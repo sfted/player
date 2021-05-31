@@ -4,11 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:core="clr-namespace:Player.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:entities="clr-namespace:Player.Core.Entities"
     xmlns:local="clr-namespace:Player.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="ThisPage"
     Title="Очередь воспроизведения"
-    d:DataContext="{d:DesignInstance Type=core:Player}"
+    d:DataContext="{d:DesignInstance Type=entities:PlaybackQueue}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     Style="{StaticResource AnimatedPageStyle}"
@@ -18,9 +19,9 @@
         <ListView
             HorizontalContentAlignment="Stretch"
             BorderThickness="0"
-            ItemsSource="{Binding PlaybackQueue}"
+            ItemsSource="{Binding Tracks}"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            SelectedItem="{Binding CurrentTrack, Mode=OneWay}">
+            SelectedItem="{Binding NowPlayingTrack, Mode=OneWay}" SelectionChanged="ListViewSelectionChanged">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Border Background="Transparent">
@@ -120,14 +121,14 @@
                         </Grid>
                         <Border.InputBindings>
                             <MouseBinding
-                                Command="{Binding DataContext.OpenAndPlayCommand, ElementName=ThisPage}"
+                                Command="{Binding MainViewModel.Player.OpenAndPlayCommand, ElementName=ThisPage}"
                                 Gesture="LeftClick">
                                 <MouseBinding.CommandParameter>
                                     <MultiBinding Converter="{StaticResource UselessButNeededConverter}">
                                         <Binding Path="" />
                                         <Binding
                                             ElementName="ThisPage"
-                                            Path="DataContext.PlaybackQueue" />
+                                            Path="DataContext" />
                                     </MultiBinding>
                                 </MouseBinding.CommandParameter>
                             </MouseBinding>

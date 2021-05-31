@@ -1,11 +1,9 @@
 ﻿using Player.Core.Entities;
 using Player.Core.Entities.Interfaces;
-using Player.Core.Utils.Extensions;
+using Player.Core.Utils;
 using Player.Core.Utils.MVVM;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Timers;
 using System.Windows.Media;
 
@@ -16,28 +14,17 @@ namespace Player.Core
         private readonly MediaPlayer player = new MediaPlayer();
         private readonly Timer timer = new Timer();
 
-        public PlaybackQueue Queue { get; private set; }
-
-        private Track currentTrack;
-        public Track CurrentTrack
+        private PlaybackQueue queue;
+        public PlaybackQueue Queue
         {
-            get => currentTrack;
+            get => queue;
             set
             {
-                currentTrack = value;
-                IsTrackSet = true;
-                NotifyPropertyChanged(nameof(CurrentTrack));
-            }
-        }
-
-        private bool isTrackSet;
-        public bool IsTrackSet
-        {
-            get => isTrackSet;
-            set
-            {
-                isTrackSet = value;
-                NotifyPropertyChanged(nameof(IsTrackSet));
+                queue = value;
+                queue.RepeatMode = Settings.RepeatMode;
+                queue.NowPlayingTrackChanged += (t) => OpenTrack(Queue.NowPlayingTrack);
+                NotifyPropertyChanged(nameof(Queue));
+                OpenTrack(Queue.NowPlayingTrack);
             }
         }
 
@@ -61,7 +48,11 @@ namespace Player.Core
         public double Volume
         {
             get => player.Volume;
-            set => player.Volume = value;
+            set
+            {
+                player.Volume = value;
+                Settings.Volume = value;
+            }
         }
 
         public TimeSpan Position
@@ -76,52 +67,61 @@ namespace Player.Core
             (
                 obj =>
                 {
-                    if (obj is Track track)
-                    {
-                        if (CurrentTrack != null && track.Id == CurrentTrack.Id)
-                            PlayPause();
-                        else
-                            PlayNewTrack(track);
-                    }
-                    else if (obj is object[] parameters)
+                    if (obj is object[] parameters)
                     {
                         var track1 = (Track)parameters[0];
-
-                        if (CurrentTrack != null && track1.Id == CurrentTrack.Id)
-                        {
-                            PlayPause();
-                        }
+                        if (Queue != null && track1.Id == Queue.NowPlayingTrack.Id) PlayPause();
                         else
                         {
-                            if (parameters[1] is IPlayable iPlayable)
-                                PlayNewTrack(track1, iPlayable);
+                            if (parameters[1] is IPlayable collection)
+                            {
+                                if (Queue != null && collection.GetHashCode() == queue.OpenedListHashCode)
+                                    queue.SkipToTrack(track1);
+                                else
+                                    PlayNewQueue(track1, collection);
+                            }
                             else if (parameters[1] is List<Track> tracks)
-                                PlayNewTrack(track1, tracks);
-                            //else if (parameters[1] is ObservableCollection<Track> queue)
-                            //{
-                            //    CurrentTrackIndexInQueue = PlaybackQueue.IndexOf(track1);
-                            //    OpenTrack(track1);
-                            //    PlayPause(true);
-                            //}
+                            {
+                                if (Queue != null && tracks.GetHashCode() == queue.OpenedListHashCode)
+                                    queue.SkipToTrack(track1);
+                                else
+                                    PlayNewQueue(track1, tracks);
+                            }
+                            else if (parameters[1] is PlaybackQueue queue) queue.SkipToTrack(track1);
                         }
                     }
-                    else if (obj is IPlayable collection)
-                    {
-                        PlayNewTrack(collection);
-                    }
+                    else if (obj is IPlayable collection) PlayNewQueue(collection);
                 }
             );
         }
 
-        //private RelayCommand cyclePlaybackModeCommand;
-        //public RelayCommand CyclePlaybackModeCommand
-        //{
-        //    get => cyclePlaybackModeCommand ??= new RelayCommand
-        //    (
-        //        obj => CyclePlaybackMode(),
-        //        obj => CanManagePlayback()
-        //    );
-        //}
+        private RelayCommand switchRepeatModeCommand;
+        public RelayCommand SwitchRepeatModeCommand
+        {
+            get => switchRepeatModeCommand ??= new RelayCommand
+            (
+                obj =>
+                {
+                    Queue.SwitchRepeatMode();
+                    Settings.RepeatMode = Queue.RepeatMode;
+                },
+                obj => CanManagePlayback()
+            );
+        }
+
+        private RelayCommand toggleShuffleCommand;
+        public RelayCommand ToggleShuffleCommand
+        {
+            get => toggleShuffleCommand ??= new RelayCommand
+            (
+                obj =>
+                {
+                    Queue.ToggleShuffle();
+                    Settings.ShuffleIsEnabled = Queue.ShuffleIsEnabled;
+                },
+                obj => CanManagePlayback()
+            );
+        }
 
         private RelayCommand playPauseCommand;
         public RelayCommand PlayPauseCommand
@@ -138,7 +138,7 @@ namespace Player.Core
         {
             get => skipToNextCommand ??= new RelayCommand
             (
-                obj => SkipToNext(),
+                obj => Queue.SkipToNextTrack(forced: true),
                 obj => CanManagePlayback() && Queue.CanSkipToNextTrack()
             );
         }
@@ -148,13 +148,14 @@ namespace Player.Core
         {
             get => skipToPreviousCommand ??= new RelayCommand
             (
-                obj => SkipToPrevious(),
+                obj => Queue.SkipToPreviousTrack(),
                 obj => CanManagePlayback()
             );
         }
 
         public Player()
         {
+            Volume = Settings.Volume;
             IsPlaying = false;
             timer.Interval = 100;
             timer.Elapsed += (s, e) =>
@@ -166,71 +167,24 @@ namespace Player.Core
             player.MediaEnded += (s, e) =>
             {
                 if (Queue.CanSkipToNextTrack())
-                    SkipToNext();
+                    Queue.SkipToNextTrack();
             };
 
             player.MediaFailed += (s, e) =>
             {
                 if (Queue.CanSkipToNextTrack())
-                    SkipToNext();
+                    Queue.SkipToNextTrack();
             };
         }
 
-        private void PlayNewTrack(Track track)
-        {
-            Queue = new PlaybackQueue(track);
-            OpenTrack(track);
-            PlayPause(true);
-        }
-
-        private void PlayNewTrack(IPlayable trackCollection)
-        {
-            var collection = new ObservableCollection<Track>();
-            foreach (var t in trackCollection.Tracks)
-                collection.Add(t);
-
-            Queue = new PlaybackQueue(collection);
-
-            OpenTrack(Queue[0]);
-            PlayPause(true);
-        }
-
-        private void PlayNewTrack(Track track, IPlayable trackCollection)
-        {
-            var collection = new ObservableCollection<Track>();
-            foreach (var t in trackCollection.Tracks)
-                collection.Add(t);
-
-            Queue = new PlaybackQueue(track, collection);
-
-            OpenTrack(track);
-            PlayPause(true);
-        }
-
-        private void PlayNewTrack(Track track, List<Track> tracks)
-        {
-            var collection = new ObservableCollection<Track>();
-            foreach (var t in tracks)
-                collection.Add(t);
-
-            Queue = new PlaybackQueue(track, collection);
-
-            OpenTrack(track);
-            PlayPause(true);
-        }
-
-        //private void CyclePlaybackMode()
-        //{
-        //    if (PlaybackMode == PlaybackModes.Shuffle)
-        //        PlaybackMode = PlaybackModes.Default;
-        //    else
-        //        PlaybackMode++;
-        //}
+        private void PlayNewQueue(IPlayable collection) => Queue = new PlaybackQueue(collection.Tracks, Settings.ShuffleIsEnabled);
+        private void PlayNewQueue(Track track, IPlayable collection) => Queue = new PlaybackQueue(track, collection.Tracks, Settings.ShuffleIsEnabled);
+        private void PlayNewQueue(Track track, List<Track> tracks) => Queue = new PlaybackQueue(track, tracks, Settings.ShuffleIsEnabled);
 
         private void OpenTrack(Track track)
         {
-            CurrentTrack = track;
             player.Open(new Uri(track.FileName, UriKind.Absolute));
+            PlayPause(true);
         }
 
         private void PlayPause(bool playForcibly = false)
@@ -258,29 +212,9 @@ namespace Player.Core
             }
         }
 
-        private void SkipToNext()
-        {
-            OpenTrack(Queue.GetNextTrack());
-            PlayPause(true);
-        }
-
-        private void SkipToPrevious()
-        {
-            OpenTrack(Queue.GetPreviousTrack());
-            PlayPause(true);
-        }
-
         private bool CanManagePlayback()
         {
-            return CurrentTrack != null;
-        }
-
-        public enum PlaybackModes
-        {
-            Default,
-            RepeatAll,
-            RepeatOne,
-            Shuffle
+            return Queue != null;
         }
     }
 }

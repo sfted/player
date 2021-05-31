@@ -4,7 +4,9 @@
     xmlns:utils="clr-namespace:Player.Core.Utils">
 
     <utils:UselessButNeededConverter x:Key="UselessButNeededConverter" />
-    <utils:PlaybackModesToIconsConverter x:Key="PlaybackModesToIconsConverter" />
+    <utils:RepeatModesToIconsConverter x:Key="RepeatModesToIconsConverter" />
+    <utils:RepeatModesToBrushConverter x:Key="RepeatModesToBrushConverter" />
+    <utils:ShuffleToBrushConverter x:Key="ShuffleToBrushConverter" />
     <utils:IsPlayingToPlayPauseIconsConverter x:Key="IsPlayingToPlayPauseIconsConverter" />
-    <utils:PlayerIsTrackSetVisibilityConverter x:Key="PlayerIsTrackSetVisibilityConverter" />
+    <utils:QueueToVisibilityConverter x:Key="QueueToVisibilityConverter" />
 </ResourceDictionary>
