@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using Player.Core.Entities;
 using System;
 using System.IO;
 
@@ -11,8 +12,8 @@ namespace Player.Core.Utils
 
         public static bool MusicIsLoaded
         {
-            get { return settings.FilesAreLoaded; }
-            set { settings.FilesAreLoaded = value; }
+            get { return settings.MusicIsLoaded; }
+            set { settings.MusicIsLoaded = value; }
         }
 
         public static string MusicDirectory
@@ -21,18 +22,38 @@ namespace Player.Core.Utils
             set { settings.LibraryDirectory = value; }
         }
 
+        public static bool ShuffleIsEnabled
+        {
+            get { return settings.ShuffleIsEnabled; }
+            set { settings.ShuffleIsEnabled = value; }
+        }
+
+        public static PlaybackQueue.RepeatModes RepeatMode
+        {
+            get { return settings.RepeatMode; }
+            set { settings.RepeatMode = value; }
+        }
+
+        public static double Volume
+        {
+            get { return settings.Volume; }
+            set { settings.Volume = value; }
+        }
+
         private class SettingsProvider
         {
-            public bool FilesAreLoaded { get; set; }
+            public bool MusicIsLoaded { get; set; }
             public string LibraryDirectory { get; set; }
+            public bool ShuffleIsEnabled { get; set; }
+            public PlaybackQueue.RepeatModes RepeatMode { get; set; }
+            public double Volume { get; set; }
 
             public SettingsProvider(bool isBlank = false)
             {
                 if (isBlank)
                 {
-                    FilesAreLoaded = false;
-                    //LibraryDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
-                    LibraryDirectory = @"D:\Music\New";
+                    MusicIsLoaded = false;
+                    LibraryDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
                 }
             }
         }

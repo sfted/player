@@ -52,9 +52,9 @@ namespace Player.ViewModels.Windows
                 {
                     page = new FolderViewPage(this, folder);
                 }
-                else if (obj is Core.Player player)
+                else if (obj is PlaybackQueue queue)
                 {
-                    page = new QueueViewPage(this) { DataContext = player };
+                    page = new QueueViewPage(this, queue);
                     if (Navigation.CurrentPage.DataContext == page.DataContext)
                         Navigation.NavigateBack();
                     else

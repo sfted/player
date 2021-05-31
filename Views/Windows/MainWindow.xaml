@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:utils="clr-namespace:Player.Core.Utils"
     xmlns:windows="clr-namespace:Player.ViewModels.Windows"
-    x:Name="CurrentWindow"
+    x:Name="ThisWindow"
     Title="Плеер"
     Width="900"
     Height="750"
@@ -49,13 +49,6 @@
                 Text="{Binding Navigation.CurrentPage.Title}" />
         </StackPanel>
 
-        <!--<TextBlock
-            Grid.Row="2"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Panel.ZIndex="1"
-            Text="Загрузка..." />-->
-
         <Frame
             Grid.Row="2"
             Panel.ZIndex="2"
@@ -65,7 +58,8 @@
         <Grid
             Grid.Row="3"
             Background="White"
-            Visibility="{Binding Player.IsTrackSet, Converter={StaticResource PlayerIsTrackSetVisibilityConverter}, FallbackValue=Collapsed}">
+            DataContext="{Binding Player}"
+            Visibility="{Binding Queue, Converter={StaticResource QueueToVisibilityConverter}, FallbackValue=Collapsed}">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -88,8 +82,8 @@
                 VerticalAlignment="Center"
                 BorderThickness="0"
                 Foreground="DodgerBlue"
-                Maximum="{Binding Player.CurrentTrack.DurationInSeconds}"
-                RealValue="{Binding Player.PositionInSeconds}" />
+                Maximum="{Binding Queue.NowPlayingTrack.DurationInSeconds}"
+                RealValue="{Binding PositionInSeconds}" />
 
             <StackPanel
                 Grid.Row="1"
@@ -99,7 +93,7 @@
                 <Button
                     Margin="0,0,8,0"
                     Padding="8"
-                    Command="{Binding Player.SkipToPreviousCommand}"
+                    Command="{Binding SkipToPreviousCommand}"
                     Style="{StaticResource FlatButtonStyle}">
                     <Path
                         Width="20"
@@ -111,19 +105,19 @@
                 <Button
                     Margin="0,0,8,0"
                     Padding="8"
-                    Command="{Binding Player.PlayPauseCommand}"
+                    Command="{Binding PlayPauseCommand}"
                     Style="{StaticResource FlatButtonStyle}">
                     <Path
                         Width="20"
                         Height="20"
-                        Data="{Binding Player.IsPlaying, Converter={StaticResource IsPlayingToPlayPauseIconsConverter}}"
+                        Data="{Binding IsPlaying, Converter={StaticResource IsPlayingToPlayPauseIconsConverter}}"
                         Fill="Gray"
                         Stretch="Uniform" />
                 </Button>
                 <Button
                     Margin="0,0,8,0"
                     Padding="8"
-                    Command="{Binding Player.SkipToNextCommand}"
+                    Command="{Binding SkipToNextCommand}"
                     Style="{StaticResource FlatButtonStyle}">
                     <Path
                         Width="20"
@@ -143,7 +137,7 @@
                 <Image
                     VerticalAlignment="Center"
                     Panel.ZIndex="2"
-                    Source="{Binding Player.CurrentTrack.Album.ArtSmall}" />
+                    Source="{Binding Queue.NowPlayingTrack.Album.ArtSmall}" />
                 <Border
                     Panel.ZIndex="1"
                     Background="#efefef"
@@ -171,11 +165,11 @@
                     Margin="0,0,0,4"
                     FontSize="13"
                     FontWeight="SemiBold"
-                    Text="{Binding Player.CurrentTrack.Title}" />
+                    Text="{Binding Queue.NowPlayingTrack.Title}" />
 
                 <ItemsControl
                     Grid.Row="1"
-                    ItemsSource="{Binding Player.CurrentTrack.Artists}">
+                    ItemsSource="{Binding Queue.NowPlayingTrack.Artists}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <VirtualizingStackPanel Orientation="Horizontal" />
@@ -192,7 +186,7 @@
                                 ToolTip="{Binding Name}">
                                 <TextBlock.InputBindings>
                                     <MouseBinding
-                                        Command="{Binding DataContext.OpenEntityCommand, ElementName=CurrentWindow}"
+                                        Command="{Binding DataContext.OpenEntityCommand, ElementName=ThisWindow}"
                                         CommandParameter="{Binding}"
                                         Gesture="LeftClick" />
                                 </TextBlock.InputBindings>
@@ -208,7 +202,7 @@
                 Margin="12,12,0,12"
                 VerticalAlignment="Center"
                 Foreground="Gray"
-                Text="{Binding Player.Position, StringFormat='{}{0:mm\\:ss}', Mode=OneWay}" />
+                Text="{Binding Position, StringFormat='{}{0:mm\\:ss}', Mode=OneWay}" />
 
             <StackPanel
                 Grid.Row="1"
@@ -218,20 +212,32 @@
                 <Button
                     Margin="0,0,8,0"
                     Padding="8"
-                    Command="{Binding Player.CyclePlaybackModeCommand}"
+                    Command="{Binding SwitchRepeatModeCommand}"
                     Style="{StaticResource FlatButtonStyle}">
                     <Path
                         Width="20"
                         Height="20"
-                        Data="{Binding Player.PlaybackMode, Converter={StaticResource PlaybackModesToIconsConverter}}"
-                        Fill="Gray"
+                        Data="{Binding Queue.RepeatMode, Converter={StaticResource RepeatModesToIconsConverter}}"
+                        Fill="{Binding Queue.RepeatMode, Converter={StaticResource RepeatModesToBrushConverter}}"
                         Stretch="Uniform" />
                 </Button>
                 <Button
                     Margin="0,0,8,0"
                     Padding="8"
-                    Command="{Binding OpenEntityCommand}"
-                    CommandParameter="{Binding Player}"
+                    Command="{Binding ToggleShuffleCommand}"
+                    Style="{StaticResource FlatButtonStyle}">
+                    <Path
+                        Width="20"
+                        Height="20"
+                        Data="{StaticResource icon-shuffle}"
+                        Fill="{Binding Queue.ShuffleIsEnabled, Converter={StaticResource ShuffleToBrushConverter}}"
+                        Stretch="Uniform" />
+                </Button>
+                <Button
+                    Margin="0,0,8,0"
+                    Padding="8"
+                    Command="{Binding DataContext.OpenEntityCommand, ElementName=ThisWindow}"
+                    CommandParameter="{Binding Queue}"
                     Style="{StaticResource FlatButtonStyle}">
                     <Path
                         Width="20"
@@ -250,7 +256,7 @@
                     Foreground="DodgerBlue"
                     Maximum="1"
                     Minimum="0"
-                    Value="{Binding Player.Volume}" />
+                    Value="{Binding Volume}" />
             </StackPanel>
         </Grid>
     </Grid>
