@@ -1,7 +1,9 @@
-﻿using Player.Core.Entities;
+﻿using Player.Core;
+using Player.Core.Entities;
 using Player.Core.Utils;
 using Player.Core.Utils.MVVM;
 using Player.ViewModels.Pages;
+using Player.Views.Dialogs;
 using Player.Views.Pages;
 using System.Windows.Controls;
 
@@ -41,7 +43,7 @@ namespace Player.ViewModels.Windows
         {
             get => openEntityCommand ??= new RelayCommand(obj =>
             {
-                // будет переписано в будущем
+                // будет переписано после 1.0
                 bool navigated = false;
                 Page page;
                 if (obj is Album album)
@@ -75,6 +77,34 @@ namespace Player.ViewModels.Windows
                 if (Navigation.CurrentPage.DataContext != page.DataContext && !navigated)
                     Navigation.NavigateTo(page);
             });
+        }
+
+        private RelayCommand addToPlaylistCommand;
+        public RelayCommand AddToPlaylistCommand
+        {
+            get => addToPlaylistCommand ??= new RelayCommand
+            (
+                obj =>
+                {
+                    if (obj is Track track)
+                    {
+                        using (var db = new ApplicationContext())
+                        {
+                            var dialog = new ChoosePlaylistDialog(db.LoadPlaylistsFast());
+                            if (dialog.ShowDialog() == true)
+                            {
+                                var playlist = db.Playlists.Find(dialog.SelectedPlaylist.Id);
+                                var trackedTrack = db.Tracks.Find(track.Id);
+                                playlist.Tracks.Add(trackedTrack);
+                                db.SaveChanges();
+
+                                db.DetachEntity(playlist);
+                                db.DetachEntity(trackedTrack);
+                            }
+                        }
+                    }
+                }
+            );
         }
 
         public MainViewModel()

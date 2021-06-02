@@ -247,6 +247,20 @@
                         Stretch="Uniform" />
                 </Button>
 
+                <Button
+                    Margin="0,0,8,0"
+                    Padding="8"
+                    Command="{Binding DataContext.AddToPlaylistCommand, ElementName=ThisWindow}"
+                    CommandParameter="{Binding Queue.NowPlayingTrack}"
+                    Style="{StaticResource FlatButtonStyle}">
+                    <Path
+                        Width="20"
+                        Height="20"
+                        Data="{StaticResource icon-playlist-add}"
+                        Fill="Gray"
+                        Stretch="Uniform" />
+                </Button>
+
                 <controls:UpdateableProgressBar
                     Width="100"
                     Height="12"

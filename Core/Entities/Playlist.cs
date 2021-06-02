@@ -27,7 +27,8 @@ namespace Player.Core.Entities
                     {
                         using (var db = new ApplicationContext())
                         {
-                            db.Playlists.Remove(this);
+                            var trackedPlaylist = db.Playlists.Find(Id);
+                            db.Playlists.Remove(trackedPlaylist);
                             db.SaveChanges();
 
                             MessageBox.Show

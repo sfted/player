@@ -47,29 +47,29 @@ namespace Player.Core
         public List<Track> LoadTracksFast()
         {
             return Tracks.Select(TrackFast())
-            .AsNoTracking()
-            .ToList();
+                .AsNoTracking()
+                .ToList();
         }
 
         public List<Album> LoadAlbumsFast()
         {
             return Albums.Select(AlbumFast())
-            .AsNoTracking()
-            .ToList();
+                .AsNoTracking()
+                .ToList();
         }
 
         public List<Artist> LoadArtistsFast()
         {
             return Artists.Select(ArtistFast())
-            .AsNoTracking()
-            .ToList();
+                .AsNoTracking()
+                .ToList();
         }
 
         public List<Playlist> LoadPlaylistsFast()
         {
             return Playlists.Select(PlaylistFast())
-            .AsNoTracking()
-            .ToList();
+                .AsNoTracking()
+                .ToList();
         }
 
         public static Expression<Func<Track, Track>> TrackFast()

@@ -14,7 +14,8 @@ namespace Player.Core.Entities
         public string FileName { get; set; }
         public long FileSize { get; set; }
         public Album Album { get; set; }
-        public List<Artist> Artists { get; set; } = new List<Artist>();
+        public virtual List<Artist> Artists { get; set; } = new List<Artist>();
+        public virtual List<Playlist> Playlists { get; set; } = new List<Playlist>();
 
         [NotMapped]
         public double DurationInSeconds

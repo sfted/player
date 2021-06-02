@@ -10,7 +10,7 @@ namespace Player.Core.Entities
     {
         public string Title { get; set; }
         public int? CoverId { get; set; }
-        public List<Track> Tracks { get; set; } = new List<Track>();
+        public virtual List<Track> Tracks { get; set; } = new List<Track>();
         public virtual Cover Cover { get; set; }
 
         private const int TINY_COVER_DIMENSION_SIZE = 32;
