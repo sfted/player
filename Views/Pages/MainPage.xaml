@@ -546,16 +546,23 @@
                         Style="{StaticResource TabHeaderTextBlockStyle}"
                         Text="ПЛЕЙЛИСТЫ" />
                 </TabItem.Header>
-                <StackPanel>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
                     <Button
+                        Grid.Row="0"
                         Margin="16,8"
                         Padding="12,6"
                         HorizontalAlignment="Left"
                         Command="{Binding AddNewPlaylistCommand}"
                         Content="Новый плейлист" />
+
                     <ListBox
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
+                        Grid.Row="1"
                         BorderThickness="0"
                         Grid.IsSharedSizeScope="False"
                         ItemsSource="{Binding Playlists}">
@@ -653,7 +660,7 @@
                             </ControlTemplate>
                         </ListBox.Template>
                     </ListBox>
-                </StackPanel>
+                </Grid>
             </TabItem>
         </TabControl>
     </Grid>

@@ -70,7 +70,7 @@ namespace Player.ViewModels.Windows
                 }
                 else if (obj is Playlist playlist)
                 {
-                    page = new PlaylistViewPage(playlist);
+                    page = new PlaylistViewPage(this, playlist);
                 }
                 else return;
 

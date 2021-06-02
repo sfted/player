@@ -6,6 +6,7 @@
     xmlns:entities="clr-namespace:Player.Core.Entities"
     xmlns:local="clr-namespace:Player.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="ThisPage"
     Title="Плейлист"
     d:DataContext="{d:DesignInstance Type=entities:Playlist}"
     d:DesignHeight="450"
@@ -132,7 +133,7 @@
                                             ToolTip="{Binding Name}">
                                             <TextBlock.InputBindings>
                                                 <MouseBinding
-                                                    Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                    Command="{Binding MainViewModel.OpenEntityCommand, ElementName=ThisPage}"
                                                     CommandParameter="{Binding}"
                                                     Gesture="LeftClick" />
                                             </TextBlock.InputBindings>
@@ -152,7 +153,7 @@
                                 ToolTip="{Binding Album.Title}">
                                 <TextBlock.InputBindings>
                                     <MouseBinding
-                                        Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                        Command="{Binding MainViewModel.OpenEntityCommand, ElementName=ThisPage}"
                                         CommandParameter="{Binding Album}"
                                         Gesture="LeftClick" />
                                 </TextBlock.InputBindings>
@@ -169,7 +170,7 @@
                         </Grid>
                         <Border.InputBindings>
                             <MouseBinding
-                                Command="{Binding DataContext.MainViewModel.Player.OpenAndPlayCommand, ElementName=ThisPage}"
+                                Command="{Binding MainViewModel.Player.OpenAndPlayCommand, ElementName=ThisPage}"
                                 Gesture="LeftClick">
                                 <MouseBinding.CommandParameter>
                                     <MultiBinding Converter="{StaticResource UselessButNeededConverter}">

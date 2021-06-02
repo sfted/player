@@ -1,6 +1,6 @@
 ﻿using Player.Core;
 using Player.Core.Entities;
-using Player.Core.Utils.Interfaces;
+using Player.ViewModels.Windows;
 using System.Linq;
 using System.Windows.Controls;
 
@@ -11,8 +11,11 @@ namespace Player.Views.Pages
     /// </summary>
     public partial class PlaylistViewPage : Page
     {
-        public PlaylistViewPage(Playlist playlist)
+        public MainViewModel MainViewModel { get; private set; }
+
+        public PlaylistViewPage(MainViewModel mainViewModel, Playlist playlist)
         {
+            MainViewModel = mainViewModel;
             InitializeComponent();
 
             using (var db = new ApplicationContext())
