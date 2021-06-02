@@ -21,7 +21,8 @@
             BorderThickness="0"
             ItemsSource="{Binding Tracks}"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            SelectedItem="{Binding NowPlayingTrack, Mode=OneWay}" SelectionChanged="ListViewSelectionChanged">
+            SelectedItem="{Binding NowPlayingTrack, Mode=OneWay}"
+            SelectionChanged="ListViewSelectionChanged">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Border Background="Transparent">
@@ -45,7 +46,7 @@
                                 <Image
                                     VerticalAlignment="Center"
                                     Panel.ZIndex="2"
-                                    Source="{Binding Album.ArtTiny}" />
+                                    Source="{Binding Album.CoverTiny}" />
                                 <Path
                                     Margin="8"
                                     Panel.ZIndex="1"

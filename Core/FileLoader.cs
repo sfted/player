@@ -174,7 +174,7 @@ namespace Player.Core
                 raw.AlbumYear,
                 raw.AlbumTrackCount,
                 raw.AlbumDiscCount,
-                raw.AlbumArt
+                raw.Cover
             );
 
             album.Tracks.Add(track);
@@ -241,7 +241,7 @@ namespace Player.Core
             return folder;
         }
 
-        private Album FindExistingOrCreateNewAlbum(string title, uint year, uint trackCount, uint discCount, byte[] albumArtData)
+        private Album FindExistingOrCreateNewAlbum(string title, uint year, uint trackCount, uint discCount, byte[] coverData)
         {
             // я не думаю, что какие-то два случайных исполнителя выпустят в один и тот же год
             // по альбому в одинаковыми названиями и одинаковым количеством треков.
@@ -257,11 +257,11 @@ namespace Player.Core
                     Year = year
                 };
 
-                if (albumArtData != null)
+                if (coverData != null)
                 {
-                    var art = new AlbumArt { Data = albumArtData };
-                    album.Art = art;
-                    database.Arts.Add(art);
+                    var cover = new Cover { Data = coverData };
+                    album.Cover = cover;
+                    database.Covers.Add(cover);
                 }
 
                 albums.Add(album);

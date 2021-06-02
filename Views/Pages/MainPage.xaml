@@ -58,7 +58,7 @@
                                         <Image
                                             VerticalAlignment="Center"
                                             Panel.ZIndex="2"
-                                            Source="{Binding Album.ArtTiny}" />
+                                            Source="{Binding Album.CoverTiny}" />
                                         <Path
                                             Margin="8"
                                             Panel.ZIndex="1"
@@ -254,21 +254,12 @@
                                         CommandParameter="{Binding}"
                                         Gesture="LeftClick" />
                                 </Grid.InputBindings>
-
-                                <Grid.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem
-                                            Command="{Binding Source={x:Reference ThisPage}, Path=DataContext.MainViewModel.Player.OpenAndPlayCommand}"
-                                            CommandParameter="{Binding}"
-                                            Header="Слушать" />
-                                    </ContextMenu>
-                                </Grid.ContextMenu>
                             </Grid>
                             <DataTemplate.Triggers>
                                 <DataTrigger
                                     Binding="{Binding Path=(controls:EffectiveScrollViewer.IsInViewport), RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"
                                     Value="True">
-                                    <Setter TargetName="Image" Property="Source" Value="{Binding ArtSmall, IsAsync=True}" />
+                                    <Setter TargetName="Image" Property="Source" Value="{Binding CoverSmall, IsAsync=True}" />
                                 </DataTrigger>
                             </DataTemplate.Triggers>
                         </DataTemplate>
@@ -335,14 +326,6 @@
                                         CommandParameter="{Binding}"
                                         Gesture="LeftClick" />
                                 </Border.InputBindings>
-                                <Border.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem
-                                            Command="{Binding Source={x:Reference ThisPage}, Path=DataContext.MainViewModel.Player.OpenAndPlayCommand}"
-                                            CommandParameter="{Binding}"
-                                            Header="Слушать" />
-                                    </ContextMenu>
-                                </Border.ContextMenu>
                             </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -539,6 +522,119 @@
                         </ListBox>
                     </StackPanel>
                 </ScrollViewer>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock
+                        Style="{StaticResource TabHeaderTextBlockStyle}"
+                        Text="ПЛЕЙЛИСТЫ" />
+                </TabItem.Header>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Button
+                        Grid.Row="0"
+                        Margin="16,8"
+                        Padding="12,6"
+                        HorizontalAlignment="Left"
+                        Command="{Binding AddNewPlaylistCommand}"
+                        Content="Новый плейлист" />
+
+                    <ListBox
+                        Grid.Row="1"
+                        BorderThickness="0"
+                        Grid.IsSharedSizeScope="False"
+                        ItemsSource="{Binding Playlists}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type entities:Playlist}">
+                                <Grid
+                                    Margin="8"
+                                    VerticalAlignment="Top"
+                                    Background="Transparent"
+                                    Cursor="Hand">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid
+                                        Width="150"
+                                        Height="150"
+                                        Background="Transparent">
+                                        <controls:CustomImage
+                                            x:Name="Image"
+                                            Panel.ZIndex="2"
+                                            Stretch="UniformToFill">
+                                            <Image.Triggers>
+                                                <EventTrigger RoutedEvent="controls:CustomImage.SourceChanged">
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <DoubleAnimation
+                                                                Storyboard.TargetProperty="(Image.Opacity)"
+                                                                From="0"
+                                                                To="1"
+                                                                Duration="0:0:0.1" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </Image.Triggers>
+                                        </controls:CustomImage>
+                                        <Border
+                                            Panel.ZIndex="1"
+                                            Background="#efefef"
+                                            CornerRadius="150">
+                                            <Path
+                                                Width="65"
+                                                Height="65"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Data="{StaticResource icon-queue-music}"
+                                                Fill="Gray"
+                                                Stretch="Uniform" />
+                                        </Border>
+                                    </Grid>
+
+                                    <StackPanel Grid.Row="1">
+                                        <TextBlock
+                                            Margin="0,3,0,0"
+                                            FontSize="13"
+                                            FontWeight="SemiBold"
+                                            Text="{Binding Title}"
+                                            TextTrimming="CharacterEllipsis"
+                                            ToolTip="{Binding Title}" />
+                                    </StackPanel>
+                                    <Grid.InputBindings>
+                                        <MouseBinding
+                                            Command="{Binding DataContext.MainViewModel.OpenEntityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                            CommandParameter="{Binding}"
+                                            Gesture="LeftClick" />
+                                    </Grid.InputBindings>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding Path=(controls:EffectiveScrollViewer.IsInViewport), RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"
+                                        Value="True">
+                                        <Setter TargetName="Image" Property="Source" Value="{Binding CoverSmall, IsAsync=True}" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.Template>
+                            <ControlTemplate>
+                                <controls:EffectiveScrollViewer
+                                    HorizontalScrollBarVisibility="Disabled"
+                                    VerticalScrollBarVisibility="Auto">
+                                    <WrapPanel
+                                        IsItemsHost="True"
+                                        ItemWidth="176" />
+                                </controls:EffectiveScrollViewer>
+                            </ControlTemplate>
+                        </ListBox.Template>
+                    </ListBox>
+                </Grid>
             </TabItem>
         </TabControl>
     </Grid>

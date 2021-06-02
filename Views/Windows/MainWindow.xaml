@@ -10,8 +10,8 @@
     xmlns:windows="clr-namespace:Player.ViewModels.Windows"
     x:Name="ThisWindow"
     Title="Плеер"
-    Width="900"
-    Height="750"
+    Width="800"
+    Height="600"
     d:DataContext="{d:DesignInstance Type=windows:MainViewModel}"
     FontFamily="Open Sans"
     Loaded="OnLoaded"
@@ -137,7 +137,7 @@
                 <Image
                     VerticalAlignment="Center"
                     Panel.ZIndex="2"
-                    Source="{Binding Queue.NowPlayingTrack.Album.ArtSmall}" />
+                    Source="{Binding Queue.NowPlayingTrack.Album.CoverSmall}" />
                 <Border
                     Panel.ZIndex="1"
                     Background="#efefef"
@@ -243,6 +243,20 @@
                         Width="20"
                         Height="20"
                         Data="{StaticResource icon-queue-music}"
+                        Fill="Gray"
+                        Stretch="Uniform" />
+                </Button>
+
+                <Button
+                    Margin="0,0,8,0"
+                    Padding="8"
+                    Command="{Binding DataContext.AddToPlaylistCommand, ElementName=ThisWindow}"
+                    CommandParameter="{Binding Queue.NowPlayingTrack}"
+                    Style="{StaticResource FlatButtonStyle}">
+                    <Path
+                        Width="20"
+                        Height="20"
+                        Data="{StaticResource icon-playlist-add}"
                         Fill="Gray"
                         Stretch="Uniform" />
                 </Button>

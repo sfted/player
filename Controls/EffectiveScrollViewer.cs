@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Player.Controls
@@ -21,10 +22,20 @@ namespace Player.Controls
             element.SetValue(IsInViewportProperty, value);
         }
 
+        protected override void OnMouseEnter(MouseEventArgs e)
+        {
+            base.OnMouseEnter(e);
+            UpdateInViewportValues();
+        }
+
         protected override void OnScrollChanged(ScrollChangedEventArgs e)
         {
             base.OnScrollChanged(e);
+            UpdateInViewportValues();
+        }
 
+        private void UpdateInViewportValues()
+        {
             var panel = Content as Panel;
             if (panel == null) return;
 
