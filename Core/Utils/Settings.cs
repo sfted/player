@@ -54,6 +54,9 @@ namespace Player.Core.Utils
                 {
                     MusicIsLoaded = false;
                     LibraryDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+                    ShuffleIsEnabled = false;
+                    RepeatMode = PlaybackQueue.RepeatModes.NONE;
+                    Volume = 0.5;
                 }
             }
         }
