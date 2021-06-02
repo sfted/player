@@ -137,7 +137,7 @@
                 <Image
                     VerticalAlignment="Center"
                     Panel.ZIndex="2"
-                    Source="{Binding Queue.NowPlayingTrack.Album.ArtSmall}" />
+                    Source="{Binding Queue.NowPlayingTrack.Album.CoverSmall}" />
                 <Border
                     Panel.ZIndex="1"
                     Background="#efefef"
