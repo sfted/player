@@ -1,4 +1,5 @@
-﻿using Player.Core.Utils.MVVM;
+﻿using Player.Core.Utils.Interfaces;
+using Player.Core.Utils.MVVM;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
@@ -48,6 +49,12 @@ namespace Player.Core.Utils
         public void ClearJournal()
         {
             Journal.Clear();
+        }
+
+        public void UpdateCurrentPage()
+        {
+            if (CurrentPage is IUpdateable updateablePage)
+                updateablePage.Update();
         }
     }
 }
