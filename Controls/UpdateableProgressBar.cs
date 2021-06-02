@@ -73,10 +73,10 @@ namespace Player.Controls
             DependencyPropertyChangedEventArgs e)
         {
             if (sender is UpdateableProgressBar u)
-                u.OnCustomerChanged(u.RealValue);
+                u.OnRealValueChanged(u.RealValue);
         }
 
-        protected virtual void OnCustomerChanged(double value)
+        protected virtual void OnRealValueChanged(double value)
         {
             if (!isMouseMoving)
                 Value = value;
