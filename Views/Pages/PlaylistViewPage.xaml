@@ -55,9 +55,9 @@
                     CornerRadius="200">
                     <Path
                         Margin="64"
-                        Data="{StaticResource icon-album}"
+                        Data="{StaticResource icon-queue-music}"
                         Fill="Gray"
-                        Stretch="UniformToFill" />
+                        Stretch="Uniform" />
                 </Border>
             </Grid>
         </Grid>

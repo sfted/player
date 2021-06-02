@@ -601,7 +601,7 @@
                                                 Height="65"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
-                                                Data="{StaticResource icon-album}"
+                                                Data="{StaticResource icon-queue-music}"
                                                 Fill="Gray"
                                                 Stretch="Uniform" />
                                         </Border>
