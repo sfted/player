@@ -11,7 +11,7 @@ namespace Player.Core
     {
         public DbSet<Track> Tracks { get; set; }
         public DbSet<Album> Albums { get; set; }
-        public DbSet<AlbumArt> Arts { get; set; }
+        public DbSet<Cover> Covers { get; set; }
         public DbSet<Artist> Artists { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Folder> Folders { get; set; }
@@ -35,7 +35,7 @@ namespace Player.Core
              * https://stackoverflow.com/questions/34967116/how-to-combine-find-and-asnotracking
              */
 
-            return Arts.AsNoTracking().First(a => a.Id == id).Data;
+            return Covers.AsNoTracking().First(a => a.Id == id).Data;
         }
 
         public void DetachEntity(BaseEntity entity)
@@ -84,7 +84,7 @@ namespace Player.Core
                 {
                     Id = track.Album.Id,
                     Title = track.Album.Title,
-                    AlbumArtId = track.Album.AlbumArtId
+                    CoverId = track.Album.CoverId
                 }
             };
         }
@@ -95,7 +95,7 @@ namespace Player.Core
             {
                 Id = album.Id,
                 Title = album.Title,
-                AlbumArtId = album.AlbumArtId,
+                CoverId = album.CoverId,
                 Year = album.Year,
 
                 Artists = album.Artists.Select(artist => new Artist

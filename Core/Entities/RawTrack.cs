@@ -18,7 +18,7 @@ namespace Player.Core.Entities
         public uint AlbumTrackCount { get; set; }
         public uint DiscNumber { get; set; }
         public uint AlbumDiscCount { get; set; }
-        public byte[] AlbumArt { get; set; }
+        public byte[] Cover { get; set; }
         public int BitRate { get; set; }
         public TimeSpan Duration { get; set; }
 
@@ -74,7 +74,7 @@ namespace Player.Core.Entities
             AlbumDiscCount = tfile.Tag.DiscCount;
 
             if (tfile.Tag.Pictures.Length > 0)
-                AlbumArt = tfile.Tag.Pictures[0].Data.Data;
+                Cover = tfile.Tag.Pictures[0].Data.Data;
 
             BitRate = tfile.Properties.AudioBitrate;
             Duration = tfile.Properties.Duration;
