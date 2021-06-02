@@ -4,6 +4,12 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <Authors>https://github.com/sfted</Authors>
+    <Product>Player</Product>
+    <PackageProjectUrl>https://github.com/sfted/player</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/sfted/player</RepositoryUrl>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>sussy-baka.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
