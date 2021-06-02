@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.IO;
 
 namespace Player.Core.Entities
@@ -7,13 +8,14 @@ namespace Player.Core.Entities
     {
         public byte[] Data { get; set; }
 
-        public static Cover FromFileName(string filename)
+        public static Cover FromFileName(string filename, int thumbnailSize = 1024)
         {
-            Image img = Image.FromFile(filename);
+            var fullsizeImage = Image.FromFile(filename);
+            var image = fullsizeImage.GetThumbnailImage(thumbnailSize, thumbnailSize, null, IntPtr.Zero);
             byte[] data;
             using (var stream = new MemoryStream())
             {
-                img.Save(stream, System.Drawing.Imaging.ImageFormat.Jpeg);
+                image.Save(stream, System.Drawing.Imaging.ImageFormat.Jpeg);
                 data = stream.ToArray();
             }
             return new Cover { Data = data };
