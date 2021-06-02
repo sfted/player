@@ -9,6 +9,7 @@ namespace Player.Core.Entities
 {
     public class Playlist : BaseEntity, IPlayable
     {
+        public string Title { get; set; }
         public List<Track> Tracks { get; set; }
     }
 }
