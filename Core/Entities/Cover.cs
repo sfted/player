@@ -1,6 +1,6 @@
 ﻿namespace Player.Core.Entities
 {
-    public class AlbumArt : BaseEntity
+    public class Cover : BaseEntity
     {
         public byte[] Data { get; set; }
     }
