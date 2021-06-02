@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Player.Core;
+using Player.Core.Entities;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Player.Views.Pages
 {
@@ -20,9 +10,28 @@ namespace Player.Views.Pages
     /// </summary>
     public partial class PlaylistViewPage : Page
     {
-        public PlaylistViewPage()
+        public PlaylistViewPage(Playlist playlist)
         {
             InitializeComponent();
+
+            using (var db = new ApplicationContext())
+            {
+                var trackedPlaylist = db.Playlists.Find(playlist.Id);
+
+                var tracks = db.Entry(trackedPlaylist)
+                    .Collection(a => a.Tracks)
+                    .Query()
+                    .Select(ApplicationContext.TrackFast())
+                    .ToList();
+
+                db.DetachEntity(trackedPlaylist);
+
+                trackedPlaylist.Tracks = tracks;
+
+                // TODO: сделать сортировку
+
+                DataContext = trackedPlaylist;
+            }
         }
     }
 }

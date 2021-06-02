@@ -15,6 +15,7 @@ namespace Player.Core
         public DbSet<Artist> Artists { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Folder> Folders { get; set; }
+        public DbSet<Playlist> Playlists { get; set; }
 
         public ApplicationContext()
         {
@@ -60,6 +61,13 @@ namespace Player.Core
         public List<Artist> LoadArtistsFast()
         {
             return Artists.Select(ArtistFast())
+            .AsNoTracking()
+            .ToList();
+        }
+
+        public List<Playlist> LoadPlaylistsFast()
+        {
+            return Playlists.Select(PlaylistFast())
             .AsNoTracking()
             .ToList();
         }
@@ -132,5 +140,17 @@ namespace Player.Core
                 Name = genre.Name
             };
         }
+
+
+        public static Expression<Func<Playlist, Playlist>> PlaylistFast()
+        {
+            return playlist => new Playlist
+            {
+                Id = playlist.Id,
+                Title = playlist.Title,
+                CoverId = playlist.CoverId
+            };
+        }
+
     }
 }
