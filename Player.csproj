@@ -15,18 +15,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\Images\album-art-placeholder.jpg" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="3.1.0" />
     <PackageReference Include="TagLibSharp" Version="2.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Resources\Images\album-art-placeholder.jpg" />
   </ItemGroup>
 
 </Project>
