@@ -11,10 +11,11 @@ namespace Player.Core
     {
         public DbSet<Track> Tracks { get; set; }
         public DbSet<Album> Albums { get; set; }
-        public DbSet<AlbumArt> Arts { get; set; }
+        public DbSet<Cover> Covers { get; set; }
         public DbSet<Artist> Artists { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Folder> Folders { get; set; }
+        public DbSet<Playlist> Playlists { get; set; }
 
         public ApplicationContext()
         {
@@ -35,7 +36,7 @@ namespace Player.Core
              * https://stackoverflow.com/questions/34967116/how-to-combine-find-and-asnotracking
              */
 
-            return Arts.AsNoTracking().First(a => a.Id == id).Data;
+            return Covers.AsNoTracking().First(a => a.Id == id).Data;
         }
 
         public void DetachEntity(BaseEntity entity)
@@ -46,22 +47,29 @@ namespace Player.Core
         public List<Track> LoadTracksFast()
         {
             return Tracks.Select(TrackFast())
-            .AsNoTracking()
-            .ToList();
+                .AsNoTracking()
+                .ToList();
         }
 
         public List<Album> LoadAlbumsFast()
         {
             return Albums.Select(AlbumFast())
-            .AsNoTracking()
-            .ToList();
+                .AsNoTracking()
+                .ToList();
         }
 
         public List<Artist> LoadArtistsFast()
         {
             return Artists.Select(ArtistFast())
-            .AsNoTracking()
-            .ToList();
+                .AsNoTracking()
+                .ToList();
+        }
+
+        public List<Playlist> LoadPlaylistsFast()
+        {
+            return Playlists.Select(PlaylistFast())
+                .AsNoTracking()
+                .ToList();
         }
 
         public static Expression<Func<Track, Track>> TrackFast()
@@ -84,7 +92,7 @@ namespace Player.Core
                 {
                     Id = track.Album.Id,
                     Title = track.Album.Title,
-                    AlbumArtId = track.Album.AlbumArtId
+                    CoverId = track.Album.CoverId
                 }
             };
         }
@@ -95,7 +103,7 @@ namespace Player.Core
             {
                 Id = album.Id,
                 Title = album.Title,
-                AlbumArtId = album.AlbumArtId,
+                CoverId = album.CoverId,
                 Year = album.Year,
 
                 Artists = album.Artists.Select(artist => new Artist
@@ -132,5 +140,17 @@ namespace Player.Core
                 Name = genre.Name
             };
         }
+
+
+        public static Expression<Func<Playlist, Playlist>> PlaylistFast()
+        {
+            return playlist => new Playlist
+            {
+                Id = playlist.Id,
+                Title = playlist.Title,
+                CoverId = playlist.CoverId
+            };
+        }
+
     }
 }

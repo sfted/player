@@ -1,14 +1,47 @@
 ﻿using Player.Core.Entities.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Player.Core.Utils.MVVM;
+using System.Windows;
 
 namespace Player.Core.Entities
 {
-    public class Playlist : BaseEntity, IPlayable
+    public class Playlist : TrackListWithCover, IPlayable
     {
-        public List<Track> Tracks { get; set; }
+        // после 1.0 это будет перенесено в отдельную ViewModel
+        private RelayCommand deleteCommand;
+        public RelayCommand DeleteCommand
+        {
+            get => deleteCommand ??= new RelayCommand
+            (
+                obj =>
+                {
+                    var result = MessageBox.Show
+                    (
+                        "Удалить этот плейлист?",
+                        "Подтвердите действие",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question,
+                        MessageBoxResult.No
+                    );
+
+                    if(result == MessageBoxResult.Yes)
+                    {
+                        using (var db = new ApplicationContext())
+                        {
+                            var trackedPlaylist = db.Playlists.Find(Id);
+                            db.Playlists.Remove(trackedPlaylist);
+                            db.SaveChanges();
+
+                            MessageBox.Show
+                            (
+                                "Плейлист удален!",
+                                "Готово",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Information
+                            );
+                        }
+                    }
+                }
+            );
+        }
     }
 }

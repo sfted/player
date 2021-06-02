@@ -2,6 +2,7 @@
 using Player.Core.Entities;
 using Player.Core.Utils.MVVM;
 using Player.ViewModels.Windows;
+using Player.Views.Dialogs;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,7 +15,41 @@ namespace Player.ViewModels.Pages
         public List<Artist> Artists { get; set; }
         public Folder RootFolder { get; set; }
 
+        private List<Playlist> playlists;
+        public List<Playlist> Playlists
+        {
+            get => playlists;
+            set
+            {
+                playlists = value;
+                NotifyPropertyChanged(nameof(Playlists));
+            }
+        }
+
         public MainViewModel MainViewModel { get; private set; }
+
+        private RelayCommand addNewPlaylistCommand;
+        public RelayCommand AddNewPlaylistCommand
+        {
+            get => addNewPlaylistCommand ??= new RelayCommand
+            (
+                obj =>
+                {
+                    var dialog = new NewPlaylistDialog();
+                    if (dialog.ShowDialog() == true)
+                    {
+                        using (var db = new ApplicationContext())
+                        {
+                            db.Playlists.Add(dialog.Playlist);
+                            if (dialog.Playlist.Cover != null)
+                                db.Covers.Add(dialog.Playlist.Cover);
+                            db.SaveChanges();
+                            LoadPlaylists();
+                        }
+                    }
+                }
+            );
+        }
 
         public MainPageViewModel(MainViewModel mainViewModel)
         {
@@ -24,6 +59,7 @@ namespace Player.ViewModels.Pages
                 Tracks = db.LoadTracksFast();
                 Albums = db.LoadAlbumsFast();
                 Artists = db.LoadArtistsFast();
+                LoadPlaylists();
 
                 // TODO: доработать
                 // (не помню зачем тут трай-кетч)
@@ -35,7 +71,15 @@ namespace Player.ViewModels.Pages
             }
         }
 
-        private Folder LoadRootFolder(ApplicationContext db)
+        public void LoadPlaylists()
+        {
+            using (var db = new ApplicationContext())
+            {
+                Playlists = db.LoadPlaylistsFast();
+            }
+        }
+
+        private static Folder LoadRootFolder(ApplicationContext db)
         {
             var rootFolder = db.Folders.Find(1);
 

@@ -85,7 +85,7 @@
                                         <Image
                                             VerticalAlignment="Center"
                                             Panel.ZIndex="2"
-                                            Source="{Binding Album.ArtTiny}" />
+                                            Source="{Binding Album.CoverTiny}" />
                                         <Path
                                             Margin="8"
                                             Panel.ZIndex="1"
@@ -265,7 +265,7 @@
                                 <DataTrigger
                                     Binding="{Binding Path=(controls:EffectiveScrollViewer.IsInViewport), RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"
                                     Value="True">
-                                    <Setter TargetName="Image" Property="Source" Value="{Binding ArtSmall, IsAsync=True}" />
+                                    <Setter TargetName="Image" Property="Source" Value="{Binding CoverSmall, IsAsync=True}" />
                                 </DataTrigger>
                             </DataTemplate.Triggers>
                         </DataTemplate>
