@@ -62,6 +62,10 @@ namespace Player.ViewModels.Windows
 
                     navigated = true;
                 }
+                else if (obj is Playlist playlist)
+                {
+                    page = new PlaylistViewPage(playlist);
+                }
                 else return;
 
                 if (Navigation.CurrentPage.DataContext != page.DataContext && !navigated)

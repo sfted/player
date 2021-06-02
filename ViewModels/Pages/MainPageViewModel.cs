@@ -2,7 +2,9 @@
 using Player.Core.Entities;
 using Player.Core.Utils.MVVM;
 using Player.ViewModels.Windows;
+using Player.Views.Dialogs;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Player.ViewModels.Pages
@@ -14,7 +16,32 @@ namespace Player.ViewModels.Pages
         public List<Artist> Artists { get; set; }
         public Folder RootFolder { get; set; }
 
+        public ObservableCollection<Playlist> Playlists { get; set; } = new ObservableCollection<Playlist>();
+
         public MainViewModel MainViewModel { get; private set; }
+
+        private RelayCommand addNewPlaylistCommand;
+        public RelayCommand AddNewPlaylistCommand
+        {
+            get => addNewPlaylistCommand ??= new RelayCommand
+            (
+                obj =>
+                {
+                    var dialog = new NewPlaylistDialog();
+                    if (dialog.ShowDialog() == true)
+                    {
+                        using (var db = new ApplicationContext())
+                        {
+                            db.Playlists.Add(dialog.Playlist);
+                            if(dialog.Playlist.Cover != null)
+                                db.Covers.Add(dialog.Playlist.Cover);
+                            db.SaveChanges();
+                            Playlists.Add(dialog.Playlist);
+                        }
+                    }
+                }
+            );
+        }
 
         public MainPageViewModel(MainViewModel mainViewModel)
         {
@@ -24,6 +51,10 @@ namespace Player.ViewModels.Pages
                 Tracks = db.LoadTracksFast();
                 Albums = db.LoadAlbumsFast();
                 Artists = db.LoadArtistsFast();
+                var playlists = db.LoadPlaylistsFast();
+
+                foreach (var p in playlists)
+                    Playlists.Add(p);
 
                 // TODO: доработать
                 // (не помню зачем тут трай-кетч)
@@ -35,7 +66,7 @@ namespace Player.ViewModels.Pages
             }
         }
 
-        private Folder LoadRootFolder(ApplicationContext db)
+        private static Folder LoadRootFolder(ApplicationContext db)
         {
             var rootFolder = db.Folders.Find(1);
 
