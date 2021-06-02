@@ -554,6 +554,8 @@
                         Command="{Binding AddNewPlaylistCommand}"
                         Content="Новый плейлист" />
                     <ListBox
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
                         BorderThickness="0"
                         Grid.IsSharedSizeScope="False"
                         ItemsSource="{Binding Playlists}">

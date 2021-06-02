@@ -27,7 +27,11 @@ namespace Player.ViewModels.Windows
         {
             get => navigateBackCommand ??= new RelayCommand
             (
-                obj => Navigation.NavigateBack(),
+                obj =>
+                {
+                    Navigation.NavigateBack();
+                    Navigation.UpdateCurrentPage();
+                },
                 obj => Navigation.CanNavigateBack()
             );
         }

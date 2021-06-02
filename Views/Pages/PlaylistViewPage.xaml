@@ -24,16 +24,22 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel
+            <TextBlock
+                Grid.Row="2"
                 Grid.Column="1"
-                Margin="16,0,0,0">
+                Margin="16,0,0,0"
+                FontSize="28"
+                Text="{Binding Title}" />
 
-                <TextBlock
-                    Grid.Row="2"
-                    Margin="0,0,0,4"
-                    FontSize="28"
-                    Text="{Binding Title}" />
-            </StackPanel>
+            <Button
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="16,0,0,0"
+                Padding="16,4"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Command="{Binding DeleteCommand}"
+                Content="Удалить плейлист" />
 
             <Grid
                 Grid.Column="0"

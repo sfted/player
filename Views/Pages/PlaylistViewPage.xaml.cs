@@ -1,5 +1,6 @@
 ﻿using Player.Core;
 using Player.Core.Entities;
+using Player.Core.Utils.Interfaces;
 using System.Linq;
 using System.Windows.Controls;
 
